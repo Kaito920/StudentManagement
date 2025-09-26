@@ -2,6 +2,7 @@ package raisetech.StudentManagement.controller.converter;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import raisetech.StudentManagement.data.Student;
@@ -26,4 +27,29 @@ public class StudentConverter {
     });
     return studentDetails;
   }
+
+  public Student convertToStudent(StudentDetail detail) {
+    Student student = new Student();
+    student.setStudentId(UUID.randomUUID().toString().substring(0,10));
+    student.setName(detail.getStudent().getName());
+    student.setFurigana(detail.getStudent().getFurigana());
+    student.setNickname(detail.getStudent().getNickname());
+    student.setMailAddress(detail.getStudent().getMailAddress());
+    student.setAddress(detail.getStudent().getAddress());
+    student.setAge(detail.getStudent().getAge());
+    student.setGender(detail.getStudent().getGender());
+
+    return student;
+  }
+
+  public  StudentsCourse convertToCourse(StudentDetail detail){
+    StudentsCourse studentsCourse = new StudentsCourse();
+    studentsCourse.setCourseId(detail.getStudentsCourses().getCourseId());
+    studentsCourse.setCourseName(detail.getStudentsCourses().getCourseName());
+
+    return  studentsCourse;
+  }
+
+
 }
+
