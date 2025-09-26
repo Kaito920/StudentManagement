@@ -11,7 +11,32 @@
   <label for="name">名前：</label>
   <input type="text" id="name" th:field="*{student.name}" required/>
 </div>
-<div>
+  <div>
+    <label for="furigana">フリガナ：</label>
+    <input type="text" id="furigana" th:field="*{student.furigana}" required/>
+  </div>
+  <div>
+    <label for="nickname">ニックネーム：</label>
+    <input type="text" id="nickname" th:field="*{student.nickname}" required/>
+  </div>
+  <div>
+    <label for="name">メールアドレス：</label>
+    <input type="text" id="mailAddress" th:field="*{student.mailAddress}" required/>
+  </div>
+  <div>
+    <label for="address">住所：</label>
+    <input type="text" id="address" th:field="*{student.address}" required/>
+  </div>
+  <div>
+    <label for="age">年齢：</label>
+    <input type="text" id="age" th:field="*{student.age}" required/>
+  </div>
+  <div>
+    <label for="gender">性別：</label>
+    <input type="text" id="gender" th:field="*{student.gender}" required/>
+  </div>
+
+  <div>
   <button type="submit">登録</button>
 </div>
 </form>

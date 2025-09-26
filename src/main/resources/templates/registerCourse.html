@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>コース登録</title>
+</head>
+<body>
+<h2>受講するコースを登録します。</h2>
+<form th:action="@{/registerCourse}" th:object="${studentDetail}" method="post" onsubmit="return validateForm()">
+
+  <!-- studentId を隠しフィールドで保持 -->
+  <input type="hidden" name="student.studentId" th:value="*{student.studentId}" />
+
+  <p>受講するコースを選択してください（複数選択可）：</p>
+
+  <!-- コース一覧をチェックボックスで表示 -->
+  <div th:each="course : ${courseList}">
+    <label>
+      <input type="checkbox" name="courseIds" th:value="${course.courseId}" />
+      <span th:text="${course.courseName}">コース名</span>
+    </label><br/>
+  </div>
+
+  <br/>
+  <button type="submit">決定</button>
+</form>
+
+<script>
+  function validateForm() {
+    const checkboxes = document.querySelectorAll('input[name="courseIds"]:checked');
+    if (checkboxes.length === 0) {
+      alert("最低1つはコースを選択してください。");
+      return false;
+    }
+    return true;
+  }
+</script>
+</body>
+</html>
