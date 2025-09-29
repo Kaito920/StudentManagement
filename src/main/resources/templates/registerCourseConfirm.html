@@ -7,8 +7,8 @@
 <body>
 <h2>受講生の登録が完了しました。</h2>
 <p>続けて受講するコースの選択を行いますか？</p>
-<form th:action="@{/registerCourseConfirm}" th:object="${studentDetail}" method="get">
-  <input type="hidden" name="student.studentId" th:value="${student.studentId}" />
+<form th:action="@{/registerCourseConfirm}" th:object="${studentDetail}" method="post">
+  <input type="hidden"  th:field="*{student.studentId}" />
   <button type="submit">はい</button>
 </form>
 <form th:action="@{/studentList}" method="get">

@@ -10,7 +10,6 @@ import raisetech.StudentManagement.data.StudentsCourse;
 import raisetech.StudentManagement.domain.StudentDetail;
 
 
-
 @Mapper
 
 public interface StudentRepository {
@@ -21,7 +20,7 @@ public interface StudentRepository {
   @Select("SELECT * FROM students_courses")
   List<StudentsCourse> searchStudentsCourse();
 
-@Insert("INSERT INTO students(student_ID,name,furigana,nickname,mail_address,address,age,gender) "
-    + "VALUES(#{studentId},#{name},#{furigana},#{nickname},#{mailAddress},#{address},#{age},#{gender})")
-void insertStudent(Student student);
+  @Insert("INSERT INTO students(student_ID,name,furigana,nickname,mail_address,address,age,gender) "
+      + "VALUES(#{studentId},#{name},#{furigana},#{nickname},#{mailAddress},#{address},#{age},#{gender})")
+  void insertStudent(Student student);
 }

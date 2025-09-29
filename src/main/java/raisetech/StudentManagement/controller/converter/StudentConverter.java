@@ -30,7 +30,7 @@ public class StudentConverter {
 
   public Student convertToStudent(StudentDetail detail) {
     Student student = new Student();
-    student.setStudentId(UUID.randomUUID().toString().substring(0,10));
+    student.setStudentId(UUID.randomUUID().toString().substring(0, 10));
     student.setName(detail.getStudent().getName());
     student.setFurigana(detail.getStudent().getFurigana());
     student.setNickname(detail.getStudent().getNickname());
@@ -42,12 +42,15 @@ public class StudentConverter {
     return student;
   }
 
-  public  StudentsCourse convertToCourse(StudentDetail detail){
-    StudentsCourse studentsCourse = new StudentsCourse();
-    studentsCourse.setCourseId(detail.getStudentsCourses().getCourseId());
-    studentsCourse.setCourseName(detail.getStudentsCourses().getCourseName());
-
-    return  studentsCourse;
+  public List<StudentsCourse> convertToStudentsCourses(StudentDetail detail) {
+    return detail.getStudentsCourses().stream()
+        .map(course -> {
+          StudentsCourse studentsCourse = new StudentsCourse();
+          studentsCourse.setStudentId(detail.getStudent().getStudentId());
+          studentsCourse.setCourseId(course.getCourseId());
+          return studentsCourse;
+        })
+        .collect(Collectors.toList());
   }
 
 

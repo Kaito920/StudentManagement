@@ -8,12 +8,12 @@
 <h2>受講するコースを登録します。</h2>
 <form th:action="@{/registerCourse}" th:object="${studentDetail}" method="post" onsubmit="return validateForm()">
 
-  <!-- studentId を隠しフィールドで保持 -->
-  <input type="hidden" name="student.studentId" th:value="*{student.studentId}" />
+
+  <input type="hidden"  th:value="*{student.studentId}" />
 
   <p>受講するコースを選択してください（複数選択可）：</p>
 
-  <!-- コース一覧をチェックボックスで表示 -->
+
   <div th:each="course : ${courseList}">
     <label>
       <input type="checkbox" name="courseIds" th:value="${course.courseId}" />
