@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>コース登録の確認</title>
+</head>
+<body>
+<h2>受講生の登録が完了しました。</h2>
+<p>続けて受講するコースの選択を行いますか？</p>
+<form th:action="@{/registerCourseConfirm}" th:object="${studentDetail}" method="post">
+  <input type="hidden"  th:field="*{student.studentId}" />
+  <button type="submit">はい</button>
+</form>
+<form th:action="@{/studentList}" method="get">
+  <button type="submit">いいえ</button>
+</form>
+</body>
+</html>
