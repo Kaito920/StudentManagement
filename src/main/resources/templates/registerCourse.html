@@ -16,7 +16,7 @@
 
   <div th:each="course : ${courseList}">
     <label>
-      <input type="checkbox" name="courseIds" th:value="${course.courseId}" />
+      <input type="checkbox" name="courseId" th:value="${course.courseId}" />
       <span th:text="${course.courseName}">コース名</span>
     </label><br/>
   </div>
@@ -27,9 +27,9 @@
 
 <script>
   function validateForm() {
-    const checkboxes = document.querySelectorAll('input[name="courseIds"]:checked');
+    const checkboxes = document.querySelectorAll('input[name="courseId"]:checked');
     if (checkboxes.length === 0) {
-      alert("最低1つはコースを選択してください。");
+      alert("コースは1つ以上選択してください。");
       return false;
     }
     return true;

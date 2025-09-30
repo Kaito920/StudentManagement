@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
+import raisetech.StudentManagement.data.Courses;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourse;
 import raisetech.StudentManagement.domain.StudentDetail;
@@ -88,12 +89,12 @@ public class StudentController {
   public String registerCourseView(@RequestParam int studentId, Model model) {
     StudentDetail detail = new StudentDetail();
     Student student = new Student();
-    student.setStudentId(studentId);
     detail.setStudent(student);
+    student.setStudentId(studentId);
 
     model.addAttribute("studentDetail", detail);
 
-    List<StudentsCourse> courseList =service.searchStudentsCourseList();
+    List<Courses> courseList =service.searchCourseList();
     model.addAttribute("courseList", courseList);
 
     return "registerCourse";
@@ -106,7 +107,8 @@ public class StudentController {
       return "registerCourse";
     }
     //Service経由でデータベースに保存
-
+    List<StudentsCourse> studentsCourses = converter.convertToStudentsCourses(studentDetail);
+    service.registerCourse(studentsCourses);
 
     return "redirect:/studentList";
   }

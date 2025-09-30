@@ -1,10 +1,11 @@
 package raisetech.StudentManagement.controller.converter;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
+import raisetech.StudentManagement.data.Courses;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourse;
 import raisetech.StudentManagement.domain.StudentDetail;
@@ -42,15 +43,22 @@ public class StudentConverter {
   }
 
   public List<StudentsCourse> convertToStudentsCourses(StudentDetail detail) {
-    return detail.getStudentsCourses().stream()
-        .map(course -> {
-          StudentsCourse studentsCourse = new StudentsCourse();
-          studentsCourse.setStudentId(detail.getStudent().getStudentId());
-          studentsCourse.setCourseId(course.getCourseId());
-          return studentsCourse;
-        })
-        .collect(Collectors.toList());
+    List<StudentsCourse> studentsCourses = new ArrayList<>();
+
+    for (Integer courseId : detail.getCourseId()) {
+      StudentsCourse sc = new StudentsCourse();
+      sc.setStudentId(detail.getStudent().getStudentId());
+      sc.setCourseId(courseId);
+      sc.setStartDate(LocalDate.now());
+      sc.setEndDate(LocalDate.now().plusMonths(6));
+      studentsCourses.add(sc);
+    }
+
+    return studentsCourses;
   }
+
+
+
 
 
 }
