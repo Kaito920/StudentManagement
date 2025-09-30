@@ -44,10 +44,10 @@ public class StudentConverter {
   public List<StudentsCourse> convertToStudentsCourses(StudentDetail detail) {
     List<StudentsCourse> studentsCourses = new ArrayList<>();
 
-    for (Integer courseId : detail.getCourseIds()) {
+    for (Integer courseIds : detail.getCourseIds()) {
       StudentsCourse sc = new StudentsCourse();
       sc.setStudentId(detail.getStudent().getStudentId());
-      sc.setCourseId(courseId);
+      sc.setCourseId(courseIds);
       sc.setStartDate(LocalDate.now());
       sc.setEndDate(LocalDate.now().plusMonths(6));
       studentsCourses.add(sc);

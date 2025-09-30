@@ -9,14 +9,14 @@
 <form th:action="@{/registerCourse}" th:object="${studentDetail}" method="post" onsubmit="return validateForm()">
 
 
-  <input type="hidden" name="student.studentIds" th:value="*{student.studentIds}" />
+  <input type="hidden" name="student.studentId" th:value="*{student.studentId}" />
 
   <p>受講するコースを選択してください（複数選択可）：</p>
 
 
   <div th:each="course : ${courseList}">
     <label>
-      <input type="checkbox" name="courseId" th:value="${course.courseId}" />
+      <input type="checkbox" name="courseIds" th:value="${course.courseId}" />
       <span th:text="${course.courseName}">コース名</span>
     </label><br/>
   </div>
@@ -27,7 +27,7 @@
 
 <script>
   function validateForm() {
-    const checkboxes = document.querySelectorAll('input[name="courseId"]:checked');
+    const checkboxes = document.querySelectorAll('input[name="courseIds"]:checked');
     if (checkboxes.length === 0) {
       alert("コースは1つ以上選択してください。");
       return false;
