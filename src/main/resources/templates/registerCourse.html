@@ -9,7 +9,7 @@
 <form th:action="@{/registerCourse}" th:object="${studentDetail}" method="post" onsubmit="return validateForm()">
 
 
-  <input type="hidden" name="student.studentId" th:value="*{student.studentId}" />
+  <input type="hidden" name="student.studentIds" th:value="*{student.studentIds}" />
 
   <p>受講するコースを選択してください（複数選択可）：</p>
 

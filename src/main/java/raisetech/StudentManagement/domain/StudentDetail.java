@@ -17,7 +17,7 @@ public class StudentDetail {
   private List<Courses> courses = new ArrayList<>();
 
   // フォームから選択されたコースIDを受け取る
-  private List<Integer> courseId = new ArrayList<>();
+  private List<Integer> courseIds = new ArrayList<>();
 
 
 }
