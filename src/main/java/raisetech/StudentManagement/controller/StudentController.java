@@ -64,7 +64,7 @@ public class StudentController {
 
   //受講コース選択をするか確認する画面表示 Y/N
   @GetMapping("/registerCourseConfirmView")
-  public String registerCourseConfirmView(@RequestParam("studentId") String studentId, Model model) {
+  public String registerCourseConfirmView(@RequestParam("studentId") int studentId, Model model) {
     StudentDetail detail = new StudentDetail();
     Student student = new Student();
     student.setStudentId(studentId);
@@ -79,19 +79,23 @@ public class StudentController {
   //Y：受講コース選択
   @PostMapping("/registerCourseConfirm")
   public String registerCourseConfirm(@ModelAttribute StudentDetail studentDetail) {
-    String studentId = studentDetail.getStudent().getStudentId();
+    int studentId = studentDetail.getStudent().getStudentId();
     return "redirect:/registerCourseView?studentId="+ studentId;
   }
 
   //受講コース選択画面表示
   @GetMapping("/registerCourseView")
-  public String registerCourseView(@RequestParam String studentId, Model model) {
+  public String registerCourseView(@RequestParam int studentId, Model model) {
     StudentDetail detail = new StudentDetail();
     Student student = new Student();
     student.setStudentId(studentId);
     detail.setStudent(student);
 
-    model.addAttribute("studentDetail", new StudentDetail());
+    model.addAttribute("studentDetail", detail);
+
+    List<StudentsCourse> courseList =service.searchStudentsCourseList();
+    model.addAttribute("courseList", courseList);
+
     return "registerCourse";
   }
 
@@ -102,6 +106,7 @@ public class StudentController {
       return "registerCourse";
     }
     //Service経由でデータベースに保存
+
 
     return "redirect:/studentList";
   }

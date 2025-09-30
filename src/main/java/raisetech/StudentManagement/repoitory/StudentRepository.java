@@ -2,6 +2,7 @@ package raisetech.StudentManagement.repoitory;
 
 import org.apache.ibatis.annotations.Insert;
 import org.apache.ibatis.annotations.Mapper;
+import org.apache.ibatis.annotations.Options;
 import org.apache.ibatis.annotations.Select;
 import java.util.List;
 import org.springframework.stereotype.Repository;
@@ -22,5 +23,6 @@ public interface StudentRepository {
 
   @Insert("INSERT INTO students(student_ID,name,furigana,nickname,mail_address,address,age,gender) "
       + "VALUES(#{studentId},#{name},#{furigana},#{nickname},#{mailAddress},#{address},#{age},#{gender})")
+  @Options(useGeneratedKeys = true, keyProperty = "studentId")
   void insertStudent(Student student);
 }

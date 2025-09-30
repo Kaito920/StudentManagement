@@ -20,7 +20,7 @@ public class StudentConverter {
       studentDetail.setStudent(student);
 
       List<StudentsCourse> convertStudentsCourses = studentsCourses.stream()
-          .filter(studentsCourse -> student.getStudentId().equals(studentsCourse.getStudentId()))
+          .filter(studentsCourse -> student.getStudentId()==studentsCourse.getStudentId())
           .collect(Collectors.toList());
       studentDetail.setStudentsCourses(convertStudentsCourses);
       studentDetails.add(studentDetail);
@@ -30,7 +30,6 @@ public class StudentConverter {
 
   public Student convertToStudent(StudentDetail detail) {
     Student student = new Student();
-    student.setStudentId(UUID.randomUUID().toString().substring(0, 10));
     student.setName(detail.getStudent().getName());
     student.setFurigana(detail.getStudent().getFurigana());
     student.setNickname(detail.getStudent().getNickname());
