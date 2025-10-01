@@ -28,6 +28,13 @@ public class StudentController {
     this.converter = converter;
   }
 
+  // 受講生メニュー画面の表示
+  @GetMapping("/studentMenu")
+  public String studentMenuView() {
+    return "studentMenu";
+  }
+
+  //受講生一覧表示
   @GetMapping("/studentList")
   public String getStudentList(Model model) {
     List<Student> students = service.searchStudentList();
@@ -112,6 +119,7 @@ public class StudentController {
 
     return "redirect:/studentList";
   }
+
 
 
 }
