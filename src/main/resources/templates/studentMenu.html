@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>受講生メニュー</title>
+</head>
+<body>
+
+<h1>受講生メニュー</h1>
+
+
+<form th:action="@{/studentList}" method="get">
+  <button type="submit">受講生一覧表示</button>
+</form>
+
+
+<form th:action="@{/newStudent}" method="get">
+  <button type="submit">新規受講生登録</button>
+</form>
+
+
+<form th:action="@{/studentList}" method="get">
+  <input type="hidden" name="mode" value="update"/>
+  <button type="submit">受講生情報の更新</button>
+</form>
+
+
+<form th:action="@{/studentList}" method="get">
+  <input type="hidden" name="mode" value="delete"/>
+  <button type="submit">受講生情報の削除</button>
+</form>
+
+</body>
+</html>

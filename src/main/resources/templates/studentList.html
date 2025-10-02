@@ -5,7 +5,17 @@
   <title>受講生一覧</title>
 </head>
 <body>
-<h1>受講生一覧</h1>
+
+<h1 th:switch="${mode}">
+  <span th:case="'view'">受講生一覧</span>
+  <span th:case="'update'">受講生情報の更新</span>
+</h1>
+
+<p th:switch="${mode}">
+  <span th:case="'view'">受講生情報を閲覧できます。</span>
+  <span th:case="'update'">情報を更新する受講生を選択してください。</span>
+</p>
+
 <table border="1">
   <thead>
   <tr>
@@ -23,7 +33,14 @@
   <tbody>
   <tr th:each="studentDetail:${studentList}">
     <td th:text="${studentDetail.student.studentId}">1</td>
-    <td th:text="${studentDetail.student.name}">山田太郎</td>
+    <!-- 更新時には名前がURLになる -->
+    <td>
+  <a th:if="${mode == 'update'}"
+  th:href="@{'/updateStudent/' + ${studentDetail.student.studentId}}"
+  th:text="${studentDetail.student.name}">山田太郎</a>
+  <span th:if="${mode != 'update'}"
+  th:text="${studentDetail.student.name}">山田太郎</span>
+  </td>
     <td th:text="${studentDetail.student.furigana}">ヤマダタロウ</td>
     <td th:text="${studentDetail.student.nickname}">タロー</td>
     <td th:text="${studentDetail.student.mailAddress}">taro@aaaa.com</td>
