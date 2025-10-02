@@ -6,15 +6,9 @@
 </head>
 <body>
 
-<h1 th:switch="${mode}">
-  <span th:case="'view'">受講生一覧</span>
-  <span th:case="'update'">受講生情報の更新</span>
-</h1>
+<h1 >受講生情報の更新</h1>
 
-<p th:switch="${mode}">
-  <span th:case="'view'">受講生情報を閲覧できます。</span>
-  <span th:case="'update'">情報を更新する受講生を選択してください。</span>
-</p>
+<p>更新する内容を選択してください</p>
 
 <table border="1">
   <thead>
