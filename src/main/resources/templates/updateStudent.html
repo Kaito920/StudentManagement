@@ -6,44 +6,107 @@
 </head>
 <body>
 
-<h1 >受講生情報の更新</h1>
-
+<h1>受講生情報の更新</h1>
 <p>更新する内容を選択してください</p>
-
+<p>更新する内容に間違いがなければ保存ボタンを押してください</p>
 <table border="1">
   <thead>
   <tr>
-    <th>ID</th>
-    <th>名前</th>
-    <th>カナ名</th>
-    <th>ニックネーム</th>
-    <th>メールアドレス</th>
-    <th>地域</th>
-    <th>年齢</th>
-    <th>性別</th>
-    <th>備考</th>
+    <th>
+      <a th:href="@{'/updateName/' + ${studentDetail.student.studentId}}">名前
+      </a></th>
+    <td>
+      <span th:text="${studentDetail.student.name}">山田太郎</span>
+    </td>
+  </tr>
+  <tr>
+    <th>
+      <a th:href="@{'/updateFurigana/' + ${studentDetail.student.studentId}}">カナ名</a>
+    </th>
+    <td>
+      <span th:text="${studentDetail.student.furigana}">ヤマダタロウ</span>
+    </td>
+  </tr>
+  <tr>
+    <th>
+      <a th:href="@{'/updateNickname/' + ${studentDetail.student.studentId}}">ニックネーム</a>
+    </th>
+    <td>
+      <span th:text="${studentDetail.student.nickname}">タロー</span>
+    </td>
+  </tr>
+  <tr>
+    <th>
+      <a th:href="@{'/updateMailAddress/' + ${studentDetail.student.studentId}}">メールアドレス</a>
+    </th>
+    <td>
+      <span th:text="${studentDetail.student.mailAddress}">taro@aaaa.com</span>
+    </td>
+  </tr>
+  <tr>
+    <th>
+      <a th:href="@{'/updateAddress/' + ${studentDetail.student.studentId}}">地域</a>
+    </th>
+    <td>
+      <span th:text="${studentDetail.student.address}">東京</span>
+    </td>
+  </tr>
+  <tr>
+    <th>
+      <a th:href="@{'/updateAge/' + ${studentDetail.student.studentId}}">年齢</a>
+    </th>
+    <td>
+      <span th:text="${studentDetail.student.age}">20</span>
+    </td>
+  </tr>
+  <tr>
+    <th>
+      <a th:href="@{'/updateGender/' + ${studentDetail.student.studentId}}"> 性別</a>
+    </th>
+    <td>
+      <span th:text="${studentDetail.student.gender}">男性</span>
+    </td>
+  </tr>
+  <tr>
+    <th>
+      <a th:href="@{'/updateRemark/' + ${studentDetail.student.studentId}}">備考</a>
+    </th>
+    <td>
+      <span th:text="${studentDetail.student.remark}">未登録</span>
+    </td>
+  </tr>
+  </thead>
+</table>
+
+<h2>受講コース一覧</h2>
+<table border="1">
+  <thead>
+  <tr>
+    <th>コース名</th>
+    <th>受講開始日</th>
+    <th>サービス終了日</th>
   </tr>
   </thead>
   <tbody>
-  <tr th:each="studentDetail:${studentList}">
-    <td th:text="${studentDetail.student.studentId}">1</td>
-    <!-- 更新時には名前がURLになる -->
+  <tr th:each="studentsCourses : ${studentDetail.studentsCourses}">
     <td>
-  <a th:if="${mode == 'update'}"
-  th:href="@{'/updateStudent/' + ${studentDetail.student.studentId}}"
-  th:text="${studentDetail.student.name}">山田太郎</a>
-  <span th:if="${mode != 'update'}"
-  th:text="${studentDetail.student.name}">山田太郎</span>
-  </td>
-    <td th:text="${studentDetail.student.furigana}">ヤマダタロウ</td>
-    <td th:text="${studentDetail.student.nickname}">タロー</td>
-    <td th:text="${studentDetail.student.mailAddress}">taro@aaaa.com</td>
-    <td th:text="${studentDetail.student.address}">東京</td>
-    <td th:text="${studentDetail.student.age}">20</td>
-    <td th:text="${studentDetail.student.gender}">男性</td>
-    <td th:text="${studentDetail.student.remark}">特になし</td>
+      <a th:href="@{'/updateCourse/' + ${studentsCourses.courseId}}"
+         th:text="${studentsCourses.courses.courseName}">コース名</a>
+    </td>
+    <td th:text="${studentsCourses.startDate}">2025-01-01</td>
+    <td th:text="${studentsCourses.endDate}">2025-03-01</td>
   </tr>
   </tbody>
 </table>
+
+<form th:action="@{/saveStudentChanges}" method="post">
+  <input type="hidden" name="studentId" th:value="${studentDetail.student.studentId}"/>
+  <button type="submit">保存</button>
+</form>
+
+<form th:action="@{/studentMenu}" method="get">
+  <button type="submit">キャンセル</button>
+</form>
+
 </body>
 </html>

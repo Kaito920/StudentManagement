@@ -55,7 +55,13 @@ public class StudentService {
     Student student = repository.searchStudentById(studentId);
     List<StudentsCourses> studentsCourses = repository.searchStudentCourseById(studentId);
 
+    for (StudentsCourses sc : studentsCourses){
+      Courses course = repository.searchCourseById(sc.getCourseId());
+      sc.setCourses(course);
+    }
     return converter.convertStudentDetails(student,studentsCourses);
   }
+
+
 
 }

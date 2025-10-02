@@ -14,4 +14,6 @@ public class StudentsCourses {
   private LocalDate startDate;
   private LocalDate endDate;
 
+  private Courses courses;
+
 }

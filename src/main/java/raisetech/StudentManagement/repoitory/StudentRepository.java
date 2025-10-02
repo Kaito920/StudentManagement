@@ -39,4 +39,6 @@ public interface StudentRepository {
   @Select("SELECT * FROM students_courses WHERE student_id = #{studentId}")
   List<StudentsCourses> searchStudentCourseById(@Param("studentId")int studentId);
 
+  @Select("SELECT * FROM courses WHERE course_id = #{courseId}")
+  Courses searchCourseById(@Param("courseId")int courseId);
 }
