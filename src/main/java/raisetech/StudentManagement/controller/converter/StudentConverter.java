@@ -6,26 +6,36 @@ import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
 import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentsCourse;
+import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.domain.StudentDetail;
 
 @Component
 public class StudentConverter {
 
+  //一覧表示用
   public List<StudentDetail> convertStudentDetails(List<Student> students,
-      List<StudentsCourse> studentsCourses) {
+      List<StudentsCourses> studentsCourses) {
     List<StudentDetail> studentDetails = new ArrayList<>();
     students.forEach(student -> {
       StudentDetail studentDetail = new StudentDetail();
       studentDetail.setStudent(student);
 
-      List<StudentsCourse> convertStudentsCourses = studentsCourses.stream()
+      List<StudentsCourses> convertStudentsCourses = studentsCourses.stream()
           .filter(studentsCourse -> student.getStudentId()==studentsCourse.getStudentId())
           .collect(Collectors.toList());
       studentDetail.setStudentsCourses(convertStudentsCourses);
       studentDetails.add(studentDetail);
     });
     return studentDetails;
+  }
+
+  //個別表示用
+  public StudentDetail convertStudentDetails(Student student,List<StudentsCourses> studentsCourses){
+    StudentDetail studentDetail = new StudentDetail();
+    studentDetail.setStudent(student);
+    studentDetail.setStudentsCourses(studentsCourses);
+
+    return studentDetail;
   }
 
   public Student convertToStudent(StudentDetail detail) {
@@ -41,11 +51,11 @@ public class StudentConverter {
     return student;
   }
 
-  public List<StudentsCourse> convertToStudentsCourses(StudentDetail detail) {
-    List<StudentsCourse> studentsCourses = new ArrayList<>();
+  public List<StudentsCourses> convertToStudentsCourses(StudentDetail detail) {
+    List<StudentsCourses> studentsCourses = new ArrayList<>();
 
     for (Integer courseIds : detail.getCourseIds()) {
-      StudentsCourse sc = new StudentsCourse();
+      StudentsCourses sc = new StudentsCourses();
       sc.setStudentId(detail.getStudent().getStudentId());
       sc.setCourseId(courseIds);
       sc.setStartDate(LocalDate.now());

@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="UTF-8">
+  <title>フィールド更新</title>
+</head>
+<body>
+<h1 th:text="${label} + 'の更新'">フィールドの更新</h1>
+<h2>新しい値を入力してください</h2>
+<form th:action="@{/updateField}" method="post">
+  <input type="hidden" name="studentId" th:value="${studentId}"/>
+  <input type="hidden" name="field" th:value="${field}"/>
+
+  <label th:text="${label} + '：'">ラベル</label>
+  <input type="text" name="value" th:value="${value}"/>
+
+  <button type="submit">更新</button>
+</form>
+<form th:action="@{/updateStudent/{studentId}(studentId=${studentId})}" method="get">
+  <button type="submit">キャンセル</button>
+</form>
+</body>
+</html>

@@ -6,14 +6,14 @@ import lombok.Getter;
 import lombok.Setter;
 import raisetech.StudentManagement.data.Courses;
 import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentsCourse;
+import raisetech.StudentManagement.data.StudentsCourses;
 
 @Getter
 @Setter
 public class StudentDetail {
 
   private Student student;
-  private List<StudentsCourse> studentsCourses = new ArrayList<>();
+  private List<StudentsCourses> studentsCourses = new ArrayList<>();
   private List<Courses> courses = new ArrayList<>();
 
   // フォームから選択されたコースIDを受け取る

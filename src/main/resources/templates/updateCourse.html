@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <title>コース変更</title>
+</head>
+<body>
+<h1>コース変更</h1>
+
+<form th:action="@{/updateCourse}" method="post">
+  <input type="hidden" name="studentId" th:value="${studentId}"/>
+
+
+  <label>新しいコース名を選択してください：</label>
+  <div th:each="course : ${courseList}">
+    <label>
+      <input type="checkbox" name="courseIds" th:value="${course.courseId}" />
+      <span th:text="${course.courseName}">コース名</span>
+    </label><br/>
+  </div>
+
+  <button type="submit">変更する</button>
+</form>
+
+<form th:action="@{/updateStudent/{studentId}(studentId=${studentId})}" method="get">
+  <input type="hidden" name="studentId" th:value="${studentId}"/>
+  <button type="submit">キャンセル</button>
+</form>
+
+</body>
+</html>
