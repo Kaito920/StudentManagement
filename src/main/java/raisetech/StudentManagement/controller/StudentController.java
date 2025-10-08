@@ -1,5 +1,6 @@
 package raisetech.StudentManagement.controller;
 
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -123,13 +124,100 @@ public class StudentController {
 
     return "redirect:/studentList";
   }
+
   //受講生情報更新：更新するCOLUMN選択画面表示
   @GetMapping("/updateStudent/{studentId}")
-  public String updateStudent(@PathVariable int studentId,Model model){
+  public String updateStudent(@PathVariable int studentId, Model model) {
     StudentDetail detail = service.getStudentDetailById(studentId);
     model.addAttribute("studentDetail", detail);
     return "updateStudent";
   }
 
+  //受講生フィールドの編集画面表示
+  @GetMapping("/updateEachField/{field}/{studentId}")
+  public String updateField(
+      @PathVariable("studentId") int studentId,
+      @PathVariable("field") String field,
+      Model model) {
+    Student student = service.searchStudentById(studentId);
+    String label = "";
+    String value = switch (field) {
+      case "name" -> {
+        label = "名前";
+        yield student.getName();
+      }
+      case "furigana" -> {
+        label = "カナ名";
+        yield student.getFurigana();
+      }
+      case "nickname" -> {
+        label = "ニックネーム";
+        yield student.getNickname();
+      }
+      case "mailAddress" -> {
+        label = "メールアドレス";
+        yield student.getMailAddress();
+      }
+      case "address" -> {
+        label = "地域";
+        yield student.getAddress();
+      }
+      case "age" -> {
+        label = "年齢";
+        yield String.valueOf(student.getAge());
+      }
+      case "gender" -> {
+        label = "性別";
+        yield student.getGender();
+      }
+      case "remark" -> {
+        label = "備考";
+        yield student.getRemark();
+      }
+      default -> throw new IllegalArgumentException("不正なフィールド名です: " + field);
+    };
 
+    model.addAttribute("label", label);
+    model.addAttribute("value", value);
+    model.addAttribute("field", field);
+    model.addAttribute("studentId", studentId);
+
+    return "updateField";
+  }
+
+  //受講生情報更新処理
+  @PostMapping("/updateField")
+  public String updateField(
+      @RequestParam int studentId,
+      @RequestParam String field,
+      @RequestParam String value) {
+    service.updateStudentField(studentId, field, value);
+    return "redirect:/updateStudent/" + studentId;
+  }
+
+  //コース情報更新画面表示
+  @GetMapping("/updateCourseView")
+  public String showUpdateCoursePage(
+      @RequestParam int studentId, Model model){
+    Student student = service.searchStudentById(studentId);
+    List<Courses> courseList = service.searchCourseList();
+
+    model.addAttribute("student", student);
+    model.addAttribute("studentId",studentId);
+    model.addAttribute("courseList", courseList);
+
+    return "updateCourse";
+  }
+
+  //受講コース更新
+  @PostMapping("/updateCourse")
+  public String updateCourse(
+      @RequestParam int studentId,
+      @RequestParam (value = "courseIds",required = false)List<Integer> courseIds){
+    if (courseIds==null){
+      courseIds = new ArrayList<>();
+    }
+    service.updateCourse(studentId, courseIds);
+    return "redirect:/updateStudent/" + studentId;
+  }
 }
