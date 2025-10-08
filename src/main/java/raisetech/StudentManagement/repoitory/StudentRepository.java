@@ -74,6 +74,12 @@ public interface StudentRepository {
   @Update("UPDATE students SET remark = #{value} WHERE student_id = #{studentId}")
   void updateStudentRemark(@Param("studentId") int studentId, @Param("value") String remark);
 
+  @Update("UPDATE students SET isDeleted = #{isDeleted} WHERE student_id = #{studentId}")
+  void logicalDeleteStudent(@Param("studentId") int studentId, @Param("isDeleted") boolean isDeleted);
+
+
+
+
   @Update("""
         UPDATE students_courses
         SET course_id = #{courseId}
