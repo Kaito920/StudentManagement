@@ -79,14 +79,6 @@ public interface StudentRepository {
 
 
 
-
-  @Update("""
-        UPDATE students_courses
-        SET course_id = #{courseId}
-        WHERE student_id = #{studentId}
-    """)
-  void updateCourse(@Param("studentId") int studentId,
-      @Param("courseId") int courseId);
 }
 
 
