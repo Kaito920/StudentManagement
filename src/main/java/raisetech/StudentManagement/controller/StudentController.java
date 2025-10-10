@@ -36,7 +36,7 @@ public class StudentController {
     return "studentMenu";
   }
 
-  //受講生一覧表示(表示のみ、更新対応)
+  //受講生一覧表示(表示のみ、更新、削除対応)
   @GetMapping("/studentList")
   public String getStudentList(
       @RequestParam(value = "mode", required = false, defaultValue = "view") String mode,
@@ -219,5 +219,14 @@ public class StudentController {
     }
     service.updateCourse(studentId, courseIds);
     return "redirect:/updateStudent/" + studentId;
+  }
+
+  //論理削除処理
+  @PostMapping("/logicalDeleteStudent")
+  public  String logicalDeleteStudent(@RequestParam(name = "studentIds",required = false)List<Integer>checkedStudentId){
+    if (checkedStudentId != null && !checkedStudentId.isEmpty()){
+      service.logicalDeleteStudent(checkedStudentId);
+    }
+    return  "redirect:/studentList?";
   }
 }

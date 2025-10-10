@@ -1,6 +1,7 @@
 package raisetech.StudentManagement.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,7 +25,6 @@ public class StudentService {
     this.repository = repository;
     this.converter = converter;
   }
-
 
   public List<Student> searchStudentList() {
     return repository.searchStudent();
@@ -115,7 +115,7 @@ public class StudentService {
         .filter(id -> !currentCourseIds.contains(id))
         .toList();
     for (Integer courseId : toInsert) {
-      StudentsCourses newCourses = new  StudentsCourses();
+      StudentsCourses newCourses = new StudentsCourses();
       newCourses.setStudentId(studentId);
       newCourses.setCourseId(courseId);
       newCourses.setStartDate(LocalDate.now());
@@ -131,6 +131,23 @@ public class StudentService {
       repository.deleteStudentCourse(studentId, courseId);
     }
   }
+
+  public void logicalDeleteStudent(List<Integer> checkedStudentIds) {
+    if (checkedStudentIds == null) {
+      checkedStudentIds = new ArrayList<>();
+    }
+    List<Student> students = repository.searchStudent();
+    List<Integer> allStudentIds = students.stream()
+        .map(Student::getStudentId)
+        .toList();
+
+    for (Integer studentId : allStudentIds) {
+      boolean isDeleted = checkedStudentIds.contains(studentId);
+      repository.logicalDeleteStudent(studentId, isDeleted);
+    }
+  }
+
+
 }
 
 
