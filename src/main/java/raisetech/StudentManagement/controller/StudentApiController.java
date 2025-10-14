@@ -6,15 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.controller.request.UpdateStudentFieldRequest;
+import raisetech.StudentManagement.controller.request.UpdateStudentsCoursesRequest;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.domain.StudentDetail;
+import raisetech.StudentManagement.domain.UpdateStudentField;
 import raisetech.StudentManagement.service.StudentService;
 
 @RestController
@@ -49,7 +50,7 @@ public class StudentApiController {
 
 
   //新規登録：受講コース登録
-  @PostMapping("/api/students/{studentId}/courses")
+  @PostMapping("/api/students/courses")
   public ResponseEntity<String> registerCourse(@Valid @RequestBody StudentDetail studentDetail) {
     List<StudentsCourses> studentsCourses = converter.convertToStudentsCourses(studentDetail);
     service.registerCourse(studentsCourses);
@@ -58,21 +59,29 @@ public class StudentApiController {
   }
 
   //受講生情報更新処理(論理削除込み)
-  @PatchMapping("/api/students/{id}")
+  @PatchMapping("/api/students")
   public ResponseEntity<String> updateField(@Valid @RequestBody UpdateStudentFieldRequest request) {
     int studentId = request.getStudentId();
     String field = request.getField();
     String value = request.getValue();
+
+    //ホワイトリストチェック
+    if (!UpdateStudentField.isValid(field)) {
+      return ResponseEntity
+          .badRequest()
+          .body("更新可能なフィールドではありません: " + field);
+    }
+
     service.updateStudentField(studentId, field, value);
     return ResponseEntity.ok("更新処理が成功しました");
   }
 
   //受講コース更新
-  @PatchMapping("/api/students/{studentId}/courses")
-  public ResponseEntity<String> updateCourse(@Valid
-      @PathVariable int studentId,
-      @RequestBody(required = false) List<Integer> courseIds
-  ) {
+  @PatchMapping("/api/students/courses")
+  public ResponseEntity<String> updateCourse(
+      @Valid @RequestBody UpdateStudentsCoursesRequest request) {
+    int studentId = request.getStudentId();
+    List<Integer> courseIds = request.getCourseIds();
     service.updateCourse(studentId, courseIds);
     return ResponseEntity.ok("受講コースの更新が成功しました");
   }
