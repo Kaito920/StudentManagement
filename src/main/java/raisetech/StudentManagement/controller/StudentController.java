@@ -198,12 +198,12 @@ public class StudentController {
   //コース情報更新画面表示
   @GetMapping("/updateCourseView")
   public String showUpdateCoursePage(
-      @RequestParam int studentId, Model model){
+      @RequestParam int studentId, Model model) {
     Student student = service.searchStudentById(studentId);
     List<Courses> courseList = service.searchCourseList();
 
     model.addAttribute("student", student);
-    model.addAttribute("studentId",studentId);
+    model.addAttribute("studentId", studentId);
     model.addAttribute("courseList", courseList);
 
     return "updateCourse";
@@ -213,8 +213,8 @@ public class StudentController {
   @PostMapping("/updateCourse")
   public String updateCourse(
       @RequestParam int studentId,
-      @RequestParam (value = "courseIds",required = false)List<Integer> courseIds){
-    if (courseIds==null){
+      @RequestParam(value = "courseIds", required = false) List<Integer> courseIds) {
+    if (courseIds == null) {
       courseIds = new ArrayList<>();
     }
     service.updateCourse(studentId, courseIds);
