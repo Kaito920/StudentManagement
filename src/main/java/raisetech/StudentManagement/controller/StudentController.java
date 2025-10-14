@@ -3,22 +3,26 @@ package raisetech.StudentManagement.controller;
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
+import raisetech.StudentManagement.controller.request.UpdateStudentFieldRequest;
 import raisetech.StudentManagement.data.Courses;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.service.StudentService;
 
-@Controller
+@RestController
 public class StudentController {
 
   private StudentService service;
@@ -38,16 +42,11 @@ public class StudentController {
 
   //受講生一覧表示(表示のみ、更新対応)
   @GetMapping("/studentList")
-  public String getStudentList(
-      @RequestParam(value = "mode", required = false, defaultValue = "view") String mode,
-      Model model) {
+  public List<StudentDetail> getStudentList() {
     List<Student> students = service.searchStudentList();
     List<StudentsCourses> studentsCourses = service.searchStudentsCourseList();
 
-    model.addAttribute("studentList", converter.convertStudentDetails(students, studentsCourses));
-    model.addAttribute("mode", mode);
-
-    return "studentList";
+    return converter.convertStudentDetails(students, studentsCourses);
   }
 
   @GetMapping("/studentCourseList")
@@ -186,13 +185,13 @@ public class StudentController {
   }
 
   //受講生情報更新処理
-  @PostMapping("/updateField")
-  public String updateField(
-      @RequestParam int studentId,
-      @RequestParam String field,
-      @RequestParam String value) {
+  @PatchMapping("/updateField")
+  public ResponseEntity<String> updateField(@RequestBody UpdateStudentFieldRequest request) {
+    int studentId = request.getStudentId();
+    String field = request.getField();
+    String value = request.getValue();
     service.updateStudentField(studentId, field, value);
-    return "redirect:/updateStudent/" + studentId;
+    return ResponseEntity.ok("更新処理が成功しました");
   }
 
   //コース情報更新画面表示
