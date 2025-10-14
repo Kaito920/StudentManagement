@@ -2,14 +2,18 @@ package raisetech.StudentManagement.controller.request;
 
 import lombok.Getter;
 import lombok.Setter;
-
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 @Getter
 @Setter
 
 public class UpdateStudentFieldRequest {
 
+  @NotBlank
   private String value;
+  @NotBlank
   private String field;
-  private int studentId;
+  @NotNull
+  private Integer studentId;
 
 }

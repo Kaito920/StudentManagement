@@ -1,0 +1,81 @@
+package raisetech.StudentManagement.controller;
+
+import jakarta.validation.Valid;
+import java.util.List;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RestController;
+import raisetech.StudentManagement.controller.converter.StudentConverter;
+import raisetech.StudentManagement.controller.request.UpdateStudentFieldRequest;
+import raisetech.StudentManagement.data.Student;
+import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.domain.StudentDetail;
+import raisetech.StudentManagement.service.StudentService;
+
+@RestController
+public class StudentApiController {
+
+  private StudentService service;
+  private StudentConverter converter;
+
+  @Autowired
+  public StudentApiController(StudentService service, StudentConverter converter) {
+    this.service = service;
+    this.converter = converter;
+  }
+
+  //受講生一覧表示
+  @GetMapping("/api/students")
+  public List<StudentDetail> getStudentList() {
+    List<Student> students = service.searchStudentList();
+    List<StudentsCourses> studentsCourses = service.searchStudentsCourseList();
+
+    return converter.convertStudentDetails(students, studentsCourses);
+  }
+
+  //新規登録：受講生情報登録
+  @PostMapping("/api/students")
+  public ResponseEntity<String> registerStudent(@Valid @RequestBody StudentDetail studentDetail) {
+    Student student = converter.convertToStudent(studentDetail);
+    service.registerStudent(student);
+
+    return ResponseEntity.ok("受講生登録が成功しました");
+  }
+
+
+  //新規登録：受講コース登録
+  @PostMapping("/api/students/{studentId}/courses")
+  public ResponseEntity<String> registerCourse(@Valid @RequestBody StudentDetail studentDetail) {
+    List<StudentsCourses> studentsCourses = converter.convertToStudentsCourses(studentDetail);
+    service.registerCourse(studentsCourses);
+
+    return ResponseEntity.ok("受講コースの登録が成功しました");
+  }
+
+  //受講生情報更新処理(論理削除込み)
+  @PatchMapping("/api/students/{id}")
+  public ResponseEntity<String> updateField(@Valid @RequestBody UpdateStudentFieldRequest request) {
+    int studentId = request.getStudentId();
+    String field = request.getField();
+    String value = request.getValue();
+    service.updateStudentField(studentId, field, value);
+    return ResponseEntity.ok("更新処理が成功しました");
+  }
+
+  //受講コース更新
+  @PatchMapping("/api/students/{studentId}/courses")
+  public ResponseEntity<String> updateCourse(@Valid
+      @PathVariable int studentId,
+      @RequestBody(required = false) List<Integer> courseIds
+  ) {
+    service.updateCourse(studentId, courseIds);
+    return ResponseEntity.ok("受講コースの更新が成功しました");
+  }
+
+
+}

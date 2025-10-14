@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -22,7 +23,7 @@ import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.service.StudentService;
 
-@RestController
+@Controller
 public class StudentController {
 
   private StudentService service;
@@ -42,11 +43,16 @@ public class StudentController {
 
   //受講生一覧表示(表示のみ、更新対応)
   @GetMapping("/studentList")
-  public List<StudentDetail> getStudentList() {
+  public String getStudentList(
+      @RequestParam(value = "mode", required = false, defaultValue = "view") String mode,
+      Model model) {
     List<Student> students = service.searchStudentList();
     List<StudentsCourses> studentsCourses = service.searchStudentsCourseList();
 
-    return converter.convertStudentDetails(students, studentsCourses);
+    model.addAttribute("studentList", converter.convertStudentDetails(students, studentsCourses));
+    model.addAttribute("mode", mode);
+
+    return "studentList";
   }
 
   @GetMapping("/studentCourseList")
@@ -185,24 +191,24 @@ public class StudentController {
   }
 
   //受講生情報更新処理
-  @PatchMapping("/updateField")
-  public ResponseEntity<String> updateField(@RequestBody UpdateStudentFieldRequest request) {
-    int studentId = request.getStudentId();
-    String field = request.getField();
-    String value = request.getValue();
+  @PostMapping("/updateField")
+  public String updateField(
+      @RequestParam int studentId,
+      @RequestParam String field,
+      @RequestParam String value) {
     service.updateStudentField(studentId, field, value);
-    return ResponseEntity.ok("更新処理が成功しました");
+    return "redirect:/updateStudent/" + studentId;
   }
 
   //コース情報更新画面表示
   @GetMapping("/updateCourseView")
   public String showUpdateCoursePage(
-      @RequestParam int studentId, Model model){
+      @RequestParam int studentId, Model model) {
     Student student = service.searchStudentById(studentId);
     List<Courses> courseList = service.searchCourseList();
 
     model.addAttribute("student", student);
-    model.addAttribute("studentId",studentId);
+    model.addAttribute("studentId", studentId);
     model.addAttribute("courseList", courseList);
 
     return "updateCourse";
@@ -212,8 +218,8 @@ public class StudentController {
   @PostMapping("/updateCourse")
   public String updateCourse(
       @RequestParam int studentId,
-      @RequestParam (value = "courseIds",required = false)List<Integer> courseIds){
-    if (courseIds==null){
+      @RequestParam(value = "courseIds", required = false) List<Integer> courseIds) {
+    if (courseIds == null) {
       courseIds = new ArrayList<>();
     }
     service.updateCourse(studentId, courseIds);
