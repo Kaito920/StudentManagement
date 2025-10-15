@@ -57,21 +57,30 @@ public class StudentApiController {
 
   //新規登録：受講生情報登録
   @PostMapping("/api/students")
-  public ResponseEntity<String> registerStudent(@Valid @RequestBody StudentDetail studentDetail) {
+  public ResponseEntity<StudentDetail> registerStudent(@Valid @RequestBody StudentDetail studentDetail) {
     Student student = converter.convertToStudent(studentDetail);
-    service.registerStudent(student);
+    Student registerStudent = service.registerStudent(student);
 
-    return ResponseEntity.ok("受講生登録が成功しました");
+    studentDetail.setStudent(registerStudent);
+
+    return ResponseEntity.ok(studentDetail);
   }
 
 
   //新規登録：受講コース登録
   @PostMapping("/api/students/courses")
-  public ResponseEntity<String> registerCourse(@Valid @RequestBody StudentDetail studentDetail) {
+  public ResponseEntity<StudentDetail> registerCourse(@Valid @RequestBody StudentDetail studentDetail) {
     List<StudentsCourses> studentsCourses = converter.convertToStudentsCourses(studentDetail);
-    service.registerCourse(studentsCourses);
+   service.registerCourse(studentsCourses);
 
-    return ResponseEntity.ok("受講コースの登録が成功しました");
+    int studentId = studentDetail.getStudent().getStudentId();
+    Student student = service.searchStudentById(studentId);
+    List<StudentsCourses> updatedStudentsCourses = service.searchStudentsCoursesById(studentId);
+    List<Courses> updatedCourses = service.searchCoursesByStudentId(studentId);
+
+    StudentDetail updateStudentDetail = converter.convertStudentDetails(student, updatedStudentsCourses, updatedCourses);
+
+    return ResponseEntity.ok(updateStudentDetail);
   }
 
   //受講生情報更新処理(論理削除込み)
@@ -94,12 +103,19 @@ public class StudentApiController {
 
   //受講コース更新
   @PatchMapping("/api/students/courses")
-  public ResponseEntity<String> updateCourse(
+  public ResponseEntity<StudentDetail> updateCourse(
       @Valid @RequestBody UpdateStudentsCoursesRequest request) {
     int studentId = request.getStudentId();
     List<Integer> courseIds = request.getCourseIds();
     service.updateCourse(studentId, courseIds);
-    return ResponseEntity.ok("受講コースの更新が成功しました");
+
+    Student student = service.searchStudentById(studentId);
+    List<StudentsCourses> studentsCourses = service.searchStudentsCoursesById(studentId);
+    List<Courses> courses = service.searchCoursesByStudentId(studentId);
+
+    StudentDetail studentDetail = converter.convertStudentDetails(student, studentsCourses, courses);
+
+    return ResponseEntity.ok(studentDetail);
   }
 
 

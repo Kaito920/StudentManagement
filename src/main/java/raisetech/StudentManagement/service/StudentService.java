@@ -57,15 +57,17 @@ public class StudentService {
 
 
   @Transactional
-  public void registerStudent(Student student) {
+  public Student registerStudent(Student student) {
     repository.registerStudent(student);
+    return student;
   }
 
   @Transactional
-  public void registerCourse(List<StudentsCourses> studentsCourses) {
+  public List<StudentsCourses> registerCourse(List<StudentsCourses> studentsCourses) {
     for (StudentsCourses sc : studentsCourses) {
       repository.registerCourse(sc);
     }
+    return studentsCourses;
   }
 
   public StudentDetail getStudentDetailById(int studentId) {
@@ -140,6 +142,7 @@ public class StudentService {
     for (Integer courseId : toDelete) {
       repository.deleteStudentCourse(studentId, courseId);
     }
+    
   }
 
   public void logicalDeleteStudent(List<Integer> checkedStudentIds) {
