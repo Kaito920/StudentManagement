@@ -36,15 +36,24 @@ public class StudentService {
 
   }
 
+  public List<StudentsCourses> searchStudentsCoursesById(int studentId){
+    return  repository.searchStudentCourseById(studentId);
+  }
+
   public List<Courses> searchCourseList() {
     return repository.searchCourse();
 
   }
 
-  public Courses searchCourseById(int courseId) {
-    return repository.searchCourseById(courseId);
+  public List<Courses> searchCoursesByStudentId(int studentId){
+    List<StudentsCourses> studentsCourses = repository.searchStudentCourseById(studentId);
+    List<Integer> courseIds = studentsCourses.stream()
+        .map(StudentsCourses::getCourseId)
+        .toList();
 
+    return repository.searchCoursesById(courseIds);
   }
+
 
 
   @Transactional
@@ -62,12 +71,13 @@ public class StudentService {
   public StudentDetail getStudentDetailById(int studentId) {
     Student student = repository.searchStudentById(studentId);
     List<StudentsCourses> studentsCourses = repository.searchStudentCourseById(studentId);
+    List<Courses> courses = repository.searchCourse().reversed();
 
     for (StudentsCourses sc : studentsCourses) {
       Courses course = repository.searchCourseById(sc.getCourseId());
       sc.setCourses(course);
     }
-    return converter.convertStudentDetails(student, studentsCourses);
+    return converter.convertStudentDetails(student, studentsCourses,courses);
   }
 
   public Student searchStudentById(int studentId) {

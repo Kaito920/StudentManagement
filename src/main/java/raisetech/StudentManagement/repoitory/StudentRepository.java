@@ -44,6 +44,17 @@ public interface StudentRepository {
   @Select("SELECT * FROM courses WHERE course_id = #{courseId}")
   Courses searchCourseById(@Param("courseId") int courseId);
 
+  @Select({
+      "<script>",
+      "SELECT * FROM courses WHERE course_id IN",
+      "<foreach item='id' collection='courseIds' open='(' separator=',' close=')'>",
+      "#{id}",
+      "</foreach>",
+      "</script>"
+  })
+  List<Courses> searchCoursesById(@Param("courseIds") List<Integer> courseIds);
+
+
   @Delete("DELETE FROM students_courses WHERE student_id = #{studentId} AND course_id = #{courseId}")
   void deleteStudentCourse(@Param("studentId") int studentId, @Param("courseId") int courseId);
 

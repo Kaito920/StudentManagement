@@ -6,12 +6,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.controller.request.UpdateStudentFieldRequest;
 import raisetech.StudentManagement.controller.request.UpdateStudentsCoursesRequest;
+import raisetech.StudentManagement.data.Courses;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.domain.StudentDetail;
@@ -35,8 +37,22 @@ public class StudentApiController {
   public List<StudentDetail> getStudentList() {
     List<Student> students = service.searchStudentList();
     List<StudentsCourses> studentsCourses = service.searchStudentsCourseList();
+    List<Courses> courses = service.searchCourseList();
 
-    return converter.convertStudentDetails(students, studentsCourses);
+
+    return converter.convertStudentDetails(students, studentsCourses,courses);
+  }
+
+  //受講生単一検索
+  @GetMapping("/api/students/{studentId}")
+  public  ResponseEntity<StudentDetail> getStudent(@PathVariable int studentId){
+    Student student = service.searchStudentById(studentId);
+    List<StudentsCourses> studentsCourses = service.searchStudentsCoursesById(studentId);
+    List<Courses> courses = service.searchCoursesByStudentId(studentId);
+
+    StudentDetail studentDetail = converter.convertStudentDetails(student,studentsCourses,courses);
+
+    return  ResponseEntity.ok(studentDetail);
   }
 
   //新規登録：受講生情報登録
