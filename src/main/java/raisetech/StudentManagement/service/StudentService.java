@@ -3,7 +3,6 @@ package raisetech.StudentManagement.service;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -63,11 +62,10 @@ public class StudentService {
   }
 
   @Transactional
-  public List<StudentsCourses> registerCourse(List<StudentsCourses> studentsCourses) {
+  public void registerCourse(List<StudentsCourses> studentsCourses) {
     for (StudentsCourses sc : studentsCourses) {
       repository.registerCourse(sc);
     }
-    return studentsCourses;
   }
 
   public StudentDetail getStudentDetailById(int studentId) {

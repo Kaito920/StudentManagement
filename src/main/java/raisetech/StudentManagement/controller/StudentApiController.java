@@ -85,7 +85,7 @@ public class StudentApiController {
 
   //受講生情報更新処理(論理削除込み)
   @PatchMapping("/api/students")
-  public ResponseEntity<String> updateField(@Valid @RequestBody UpdateStudentFieldRequest request) {
+  public ResponseEntity<?> updateField(@Valid @RequestBody UpdateStudentFieldRequest request) {
     int studentId = request.getStudentId();
     String field = request.getField();
     String value = request.getValue();
@@ -98,7 +98,12 @@ public class StudentApiController {
     }
 
     service.updateStudentField(studentId, field, value);
-    return ResponseEntity.ok("更新処理が成功しました");
+
+    Student student = service.searchStudentById(studentId);
+    List<StudentsCourses> studentsCourses = service.searchStudentsCoursesById(studentId);
+    List<Courses> courses = service.searchCoursesByStudentId(studentId);
+    StudentDetail studentDetail = converter.convertStudentDetails(student, studentsCourses, courses);
+    return ResponseEntity.ok(studentDetail);
   }
 
   //受講コース更新
