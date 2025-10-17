@@ -231,6 +231,7 @@ public class StudentService {
    * @param toRestoreIds 復元する受講生のID
    * @return 論理削除後の受講生情報一覧（true,falseかかわらず全件）
    */
+  @Transactional
   public List<StudentDetail> logicalDeleteStudent(
       List<Integer> toDeleteIds,
       List<Integer> toRestoreIds) {
