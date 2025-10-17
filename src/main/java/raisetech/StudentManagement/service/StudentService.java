@@ -1,18 +1,23 @@
 package raisetech.StudentManagement.service;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
+import raisetech.StudentManagement.controller.request.UpdateStudentFieldRequest;
+import raisetech.StudentManagement.controller.request.UpdateStudentsCoursesRequest;
 import raisetech.StudentManagement.data.Courses;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.domain.StudentDetail;
+import raisetech.StudentManagement.domain.UpdateStudentField;
 import raisetech.StudentManagement.repoitory.StudentRepository;
 
+/**
+ * 受講生情報を取り扱うサービス 受講生情報の検索、登録、更新を行います。
+ */
 @Service
 public class StudentService {
 
@@ -25,26 +30,63 @@ public class StudentService {
     this.converter = converter;
   }
 
+  /**
+   * 受講生一覧検索 全件検索を行うため条件指定は行いません。
+   *
+   * @return 受講生一覧（全件）
+   */
   public List<Student> searchStudentList() {
     return repository.searchStudent();
 
   }
 
+  /**
+   * 受講生単一検索 studentIdに紐づく任意の受講生情報を取得します。
+   *
+   * @param studentId 受講生ID
+   * @return 受講生詳細情報
+   */
+  public Student searchStudentById(int studentId) {
+    return repository.searchStudentById(studentId);
+  }
+
+  /**
+   * 受講コース情報一覧検索　全件を検索するため条件指定は行いません。
+   *
+   * @return 受講生コース情報一覧（全件）
+   */
   public List<StudentsCourses> searchStudentsCourseList() {
     return repository.searchStudentsCourse();
 
   }
 
-  public List<StudentsCourses> searchStudentsCoursesById(int studentId){
-    return  repository.searchStudentCourseById(studentId);
+  /**
+   * 受講コース情報検索　studentIdに紐づく任意の受講コース情報を取得します。
+   *
+   * @param studentId 受講生ID
+   * @return 受講コース情報
+   */
+  public List<StudentsCourses> searchStudentsCoursesById(int studentId) {
+    return repository.searchStudentCourseById(studentId);
   }
 
+  /**
+   * コース情報一覧検索 全件を検索するため条件指定は行いません。
+   *
+   * @return コース情報一覧（全件）
+   */
   public List<Courses> searchCourseList() {
     return repository.searchCourse();
 
   }
 
-  public List<Courses> searchCoursesByStudentId(int studentId){
+  /**
+   * コース情報検索　指定された受講生IDに関連付けられた全てのコース情報を取得します。
+   *
+   * @param studentId 受講生ID
+   * @return コース情報
+   */
+  public List<Courses> searchCoursesByStudentId(int studentId) {
     List<StudentsCourses> studentsCourses = repository.searchStudentCourseById(studentId);
     List<Integer> courseIds = studentsCourses.stream()
         .map(StudentsCourses::getCourseId)
@@ -54,73 +96,111 @@ public class StudentService {
   }
 
 
+  /**
+   * 受講生情報一覧検索　全件検索を行うため条件指定は行いません。
+   *
+   * @return 受講生詳細情報（全件）
+   */
+  public List<StudentDetail> getStudentDetail() {
+    List<Student> students = searchStudentList();
+    List<StudentsCourses> studentsCourses = searchStudentsCourseList();
+    List<Courses> courses = searchCourseList();
 
-  @Transactional
-  public Student registerStudent(Student student) {
-    repository.registerStudent(student);
-    return student;
+    return converter.convertStudentDetails(students, studentsCourses, courses);
   }
 
+  /**
+   * 受講生情報検索　studentIdに紐づく任意の受講コース情報からコース情報を取得します。
+   *
+   * @param studentId 受講生ID
+   * @return 受講生詳細情報
+   */
+  public StudentDetail getStudentDetail(int studentId) {
+    Student student = searchStudentById(studentId);
+    List<StudentsCourses> studentsCourses = searchStudentsCoursesById(studentId);
+    List<Courses> courses = searchCoursesByStudentId(studentId);
+
+    return converter.convertStudentDetails(student, studentsCourses, courses);
+  }
+
+  /**
+   * 受講生新規登録　受講生の基本情報をデータベースに登録します。
+   *
+   * @param studentDetail 登録する受講生の基本情報
+   * @return 登録された受講生詳細情報
+   */
   @Transactional
-  public void registerCourse(List<StudentsCourses> studentsCourses) {
+  public StudentDetail registerStudent(StudentDetail studentDetail) {
+    Student student = converter.convertToStudent(studentDetail);
+    repository.registerStudent(student);
+    studentDetail.setStudent(student);
+    return studentDetail;
+  }
+
+  /**
+   * 受講コース登録　studentIdに紐づく任意の受講生に１件以上のコース情報を登録します。
+   *
+   * @param studentDetail 登録する受講生の基本情報とコース情報
+   * @return 登録された受講生詳細情報
+   */
+  @Transactional
+  public StudentDetail registerCourse(StudentDetail studentDetail) {
+    List<StudentsCourses> studentsCourses = converter.convertToStudentsCourses(studentDetail);
     for (StudentsCourses sc : studentsCourses) {
       repository.registerCourse(sc);
     }
+    int studentId = studentDetail.getStudent().getStudentId();
+    return getStudentDetail(studentId);
   }
 
-  public StudentDetail getStudentDetailById(int studentId) {
-    Student student = repository.searchStudentById(studentId);
-    List<StudentsCourses> studentsCourses = repository.searchStudentCourseById(studentId);
-    List<Courses> courses = repository.searchCourse().reversed();
-
-    for (StudentsCourses sc : studentsCourses) {
-      Courses course = repository.searchCourseById(sc.getCourseId());
-      sc.setCourses(course);
-    }
-    return converter.convertStudentDetails(student, studentsCourses,courses);
-  }
-
-  public Student searchStudentById(int studentId) {
-    return repository.searchStudentById(studentId);
-  }
-
+  /**
+   * 受講生情報更新　studentIdに紐づく任意の受講生情報からフィールドを指定し更新します。
+   *
+   * @param request 更新リクエスト（受講生ID、フィールド名、更新値）
+   * @return 更新後の受講生詳細情報
+   */
   @Transactional
-  public void updateStudentField(int studentId, String field, String value) {
+  public StudentDetail updateStudentField(UpdateStudentFieldRequest request) {
+    int studentId = request.getStudentId();
+    String field = request.getField();
+    String value = request.getValue();
+
+    if (!UpdateStudentField.isValid(field)) {
+      throw new IllegalArgumentException("更新可能なフィールドではありません: " + field);
+    }
+
     switch (field) {
-      case "name":
-        repository.updateStudentName(studentId, value);
-        break;
-      case "furigana":
-        repository.updateStudentFurigana(studentId, value);
-        break;
-      case "nickname":
-        repository.updateStudentNickname(studentId, value);
-        break;
-      case "mailAddress":
-        repository.updateStudentMailAddress(studentId, value);
-        break;
-      case "address":
-        repository.updateStudentAddress(studentId, value);
-        break;
-      case "age":
-        repository.updateStudentAge(studentId, Integer.parseInt(value));
-        break;
-      case "gender":
-        repository.updateStudentGender(studentId, value);
-        break;
-      case "remark":
-        repository.updateStudentRemark(studentId, value);
-        break;
+      case "name" -> repository.updateStudentName(studentId, value);
+      case "furigana" -> repository.updateStudentFurigana(studentId, value);
+      case "nickname" -> repository.updateStudentNickname(studentId, value);
+      case "mailAddress" -> repository.updateStudentMailAddress(studentId, value);
+      case "address" -> repository.updateStudentAddress(studentId, value);
+      case "age" -> repository.updateStudentAge(studentId, Integer.parseInt(value));
+      case "gender" -> repository.updateStudentGender(studentId, value);
+      case "remark" -> repository.updateStudentRemark(studentId, value);
+      default -> throw new IllegalArgumentException("不正なフィールド名です：" + field);
     }
+    return getStudentDetail(studentId);
   }
 
+  /**
+   * 受講コース更新 studentIdに紐づく任意の受講生の受講コース情報を更新します。 新規になるコースは追加、受講中のものが選択されなければ削除します。
+   *
+   * @param request 更新リクエスト（受講生ID、新しい受講コースID一覧）
+   * @return コース更新後の受講生詳細情報
+   */
   @Transactional
-  public void updateCourse(int studentId, List<Integer> newCourseIds) {
+  public StudentDetail updateCourse(UpdateStudentsCoursesRequest request) {
+    int studentId = request.getStudentId();
+    List<Integer> newCourseIds = request.getCourseIds();
+
+    //現在の受講コース取得
     List<StudentsCourses> studentsCourses = repository.searchStudentCourseById(studentId);
     List<Integer> currentCourseIds = studentsCourses.stream()
         .map(StudentsCourses::getCourseId)
         .toList();
 
+    //追加する受講コース
     List<Integer> toInsert = newCourseIds.stream()
         .filter(id -> !currentCourseIds.contains(id))
         .toList();
@@ -133,29 +213,39 @@ public class StudentService {
       repository.registerCourse(newCourses);
     }
 
+    //削除する受講コース
     List<Integer> toDelete = currentCourseIds.stream()
         .filter(id -> !newCourseIds.contains(id))
         .toList();
-
     for (Integer courseId : toDelete) {
       repository.deleteStudentCourse(studentId, courseId);
     }
-    
+
+    return getStudentDetail(studentId);
   }
 
-  public void logicalDeleteStudent(List<Integer> checkedStudentIds) {
-    if (checkedStudentIds == null) {
-      checkedStudentIds = new ArrayList<>();
-    }
-    List<Student> students = repository.searchStudent();
-    List<Integer> allStudentIds = students.stream()
-        .map(Student::getStudentId)
-        .toList();
+  /**
+   * 受講生情報論理削除　studentIdに紐づく任意の受講生情報の削除フラグを更新します。
+   *
+   * @param toDeleteIds  削除する受講生のID
+   * @param toRestoreIds 復元する受講生のID
+   * @return 論理削除後の受講生情報一覧（true,falseかかわらず全件）
+   */
+  public List<StudentDetail> logicalDeleteStudent(
+      List<Integer> toDeleteIds,
+      List<Integer> toRestoreIds) {
 
-    for (Integer studentId : allStudentIds) {
-      boolean isDeleted = checkedStudentIds.contains(studentId);
-      repository.logicalDeleteStudent(studentId, isDeleted);
+    if (toDeleteIds != null) {
+      for (Integer id : toDeleteIds) {
+        repository.logicalDeleteStudent(id, true);
+      }
     }
+    if (toRestoreIds != null) {
+      for (Integer id : toRestoreIds) {
+        repository.logicalDeleteStudent(id, false);
+      }
+    }
+    return getStudentDetail();
   }
 
 

@@ -12,13 +12,29 @@ import raisetech.StudentManagement.data.Courses;
 import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentsCourses;
 
-
+/**
+ * 受講生情報、受講生コース情報、コース情報の３つのテーブルと紐づくRepository
+ */
 @Mapper
 
 public interface StudentRepository {
 
+  /**
+   * 受講生一覧検索
+   * 全件検索を行うため条件指定は行いません。
+   * @return 受講生一覧（全件）
+   */
   @Select("SELECT * FROM students")
   List<Student> searchStudent();
+
+  /**
+   * 受講生単一検索
+   * studentIdに紐づく任意の受講生情報を取得します。
+   * @param studentId　受講生ID
+   * @return 受講生情報
+   */
+  @Select("SELECT * FROM students WHERE student_id = #{studentId}")
+  Student searchStudentById(@Param("studentId") int studentId);
 
   @Select("SELECT * FROM courses")
   List<Courses> searchCourse();
@@ -35,14 +51,8 @@ public interface StudentRepository {
       + "VALUES(#{studentId},#{courseId},#{startDate},#{endDate})")
   void registerCourse(StudentsCourses studentsCourses);
 
-  @Select("SELECT * FROM students WHERE student_id = #{studentId}")
-  Student searchStudentById(@Param("studentId") int studentId);
-
   @Select("SELECT * FROM students_courses WHERE student_id = #{studentId}")
   List<StudentsCourses> searchStudentCourseById(@Param("studentId") int studentId);
-
-  @Select("SELECT * FROM courses WHERE course_id = #{courseId}")
-  Courses searchCourseById(@Param("courseId") int courseId);
 
   @Select({
       "<script>",
@@ -57,7 +67,7 @@ public interface StudentRepository {
 
   @Delete("DELETE FROM students_courses WHERE student_id = #{studentId} AND course_id = #{courseId}")
   void deleteStudentCourse(@Param("studentId") int studentId, @Param("courseId") int courseId);
-
+  
 
 
 

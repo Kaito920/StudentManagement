@@ -11,8 +11,7 @@ public enum UpdateStudentField {
   ADDRESS("address"),
   AGE("age"),
   GENDER("gender"),
-  REMARK("remark"),
-  IS_DELETED("isDeleted");
+  REMARK("remark");
 
   private final  String fieldName;
 
