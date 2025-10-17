@@ -6,9 +6,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import raisetech.StudentManagement.data.Courses;
+import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.data.StudentCourse;
 
 @Getter
 @Setter
@@ -17,8 +17,8 @@ import raisetech.StudentManagement.data.StudentsCourses;
 public class StudentDetail {
 
   private Student student;
-  private List<StudentsCourses> studentsCourses = new ArrayList<>();
-  private List<Courses> courses = new ArrayList<>();
+  private List<StudentCourse> studentCourseList = new ArrayList<>();
+  private List<Course> courseList = new ArrayList<>();
 
   // フォームから選択されたコースIDを受け取る
   private List<Integer> courseIds = new ArrayList<>();

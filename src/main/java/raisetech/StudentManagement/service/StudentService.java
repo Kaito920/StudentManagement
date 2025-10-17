@@ -8,9 +8,9 @@ import org.springframework.transaction.annotation.Transactional;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.controller.request.UpdateStudentFieldRequest;
 import raisetech.StudentManagement.controller.request.UpdateStudentsCoursesRequest;
-import raisetech.StudentManagement.data.Courses;
+import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.data.StudentCourse;
 import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.domain.UpdateStudentField;
 import raisetech.StudentManagement.repoitory.StudentRepository;
@@ -31,9 +31,9 @@ public class StudentService {
   }
 
   /**
-   * 受講生一覧検索 全件検索を行うため条件指定は行いません。
+   * 受講生詳細一覧検索 全件検索を行うため条件指定は行いません。
    *
-   * @return 受講生一覧（全件）
+   * @return 受講生詳細一覧（全件）
    */
   public List<Student> searchStudentList() {
     return repository.searchStudent();
@@ -41,7 +41,7 @@ public class StudentService {
   }
 
   /**
-   * 受講生単一検索 studentIdに紐づく任意の受講生情報を取得します。
+   * 受講生詳細単一検索 studentIdに紐づく任意の受講生情報を取得します。
    *
    * @param studentId 受講生ID
    * @return 受講生詳細情報
@@ -55,7 +55,7 @@ public class StudentService {
    *
    * @return 受講生コース情報一覧（全件）
    */
-  public List<StudentsCourses> searchStudentsCourseList() {
+  public List<StudentCourse> searchStudentCourseList() {
     return repository.searchStudentsCourse();
 
   }
@@ -66,7 +66,7 @@ public class StudentService {
    * @param studentId 受講生ID
    * @return 受講コース情報
    */
-  public List<StudentsCourses> searchStudentsCoursesById(int studentId) {
+  public List<StudentCourse> searchStudentCourseByStudentId(int studentId) {
     return repository.searchStudentCourseById(studentId);
   }
 
@@ -75,7 +75,7 @@ public class StudentService {
    *
    * @return コース情報一覧（全件）
    */
-  public List<Courses> searchCourseList() {
+  public List<Course> searchCourseList() {
     return repository.searchCourse();
 
   }
@@ -86,10 +86,10 @@ public class StudentService {
    * @param studentId 受講生ID
    * @return コース情報
    */
-  public List<Courses> searchCoursesByStudentId(int studentId) {
-    List<StudentsCourses> studentsCourses = repository.searchStudentCourseById(studentId);
+  public List<Course> searchCourseByStudentId(int studentId) {
+    List<StudentCourse> studentsCourses = repository.searchStudentCourseById(studentId);
     List<Integer> courseIds = studentsCourses.stream()
-        .map(StudentsCourses::getCourseId)
+        .map(StudentCourse::getCourseId)
         .toList();
 
     return repository.searchCoursesById(courseIds);
@@ -102,11 +102,11 @@ public class StudentService {
    * @return 受講生詳細情報（全件）
    */
   public List<StudentDetail> getStudentDetail() {
-    List<Student> students = searchStudentList();
-    List<StudentsCourses> studentsCourses = searchStudentsCourseList();
-    List<Courses> courses = searchCourseList();
+    List<Student> studentList = searchStudentList();
+    List<StudentCourse> studentCourseList = searchStudentCourseList();
+    List<Course> courseList = searchCourseList();
 
-    return converter.convertStudentDetails(students, studentsCourses, courses);
+    return converter.convertStudentDetails(studentList, studentCourseList, courseList);
   }
 
   /**
@@ -117,10 +117,10 @@ public class StudentService {
    */
   public StudentDetail getStudentDetail(int studentId) {
     Student student = searchStudentById(studentId);
-    List<StudentsCourses> studentsCourses = searchStudentsCoursesById(studentId);
-    List<Courses> courses = searchCoursesByStudentId(studentId);
+    List<StudentCourse> studentCourseList = searchStudentCourseByStudentId(studentId);
+    List<Course> courseList = searchCourseByStudentId(studentId);
 
-    return converter.convertStudentDetails(student, studentsCourses, courses);
+    return converter.convertStudentDetails(student, studentCourseList, courseList);
   }
 
   /**
@@ -145,8 +145,8 @@ public class StudentService {
    */
   @Transactional
   public StudentDetail registerCourse(StudentDetail studentDetail) {
-    List<StudentsCourses> studentsCourses = converter.convertToStudentsCourses(studentDetail);
-    for (StudentsCourses sc : studentsCourses) {
+    List<StudentCourse> studentCourseList = converter.convertToStudentsCourses(studentDetail);
+    for (StudentCourse sc : studentCourseList) {
       repository.registerCourse(sc);
     }
     int studentId = studentDetail.getStudent().getStudentId();
@@ -195,9 +195,9 @@ public class StudentService {
     List<Integer> newCourseIds = request.getCourseIds();
 
     //現在の受講コース取得
-    List<StudentsCourses> studentsCourses = repository.searchStudentCourseById(studentId);
-    List<Integer> currentCourseIds = studentsCourses.stream()
-        .map(StudentsCourses::getCourseId)
+    List<StudentCourse> studentCourseList = repository.searchStudentCourseById(studentId);
+    List<Integer> currentCourseIds = studentCourseList.stream()
+        .map(StudentCourse::getCourseId)
         .toList();
 
     //追加する受講コース
@@ -205,7 +205,7 @@ public class StudentService {
         .filter(id -> !currentCourseIds.contains(id))
         .toList();
     for (Integer courseId : toInsert) {
-      StudentsCourses newCourses = new StudentsCourses();
+      StudentCourse newCourses = new StudentCourse();
       newCourses.setStudentId(studentId);
       newCourses.setCourseId(courseId);
       newCourses.setStartDate(LocalDate.now());

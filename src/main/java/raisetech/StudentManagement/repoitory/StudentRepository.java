@@ -8,9 +8,9 @@ import org.apache.ibatis.annotations.Param;
 import org.apache.ibatis.annotations.Select;
 import java.util.List;
 import org.apache.ibatis.annotations.Update;
-import raisetech.StudentManagement.data.Courses;
+import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.data.StudentCourse;
 
 /**
  * 受講生情報、受講生コース情報、コース情報の３つのテーブルと紐づくRepository
@@ -42,7 +42,7 @@ public interface StudentRepository {
    * @return コース情報一覧（全件）
    */
   @Select("SELECT * FROM courses")
-  List<Courses> searchCourse();
+  List<Course> searchCourse();
 
   /**
    * 受講情報一覧検索　全件検索を行うため条件指定は行いません。
@@ -50,7 +50,7 @@ public interface StudentRepository {
    * @return 受講情報一覧（全件）
    */
   @Select("SELECT * FROM students_courses")
-  List<StudentsCourses> searchStudentsCourse();
+  List<StudentCourse> searchStudentsCourse();
 
   /**
    * 新規受講生登録　入力されたデータを持つ受講生を新たに登録します。 受講生IDは自動採番されます。
@@ -70,7 +70,7 @@ public interface StudentRepository {
    */
   @Insert("INSERT INTO students_Courses(student_ID,course_ID,start_date,end_date)"
       + "VALUES(#{studentId},#{courseId},#{startDate},#{endDate})")
-  void registerCourse(StudentsCourses studentsCourses);
+  void registerCourse(StudentCourse studentsCourses);
 
   /**
    * 受講コース情報検索　選択された受講生に紐づく受講コース情報を検索します。
@@ -79,7 +79,7 @@ public interface StudentRepository {
    * @return 受講生詳細情報
    */
   @Select("SELECT * FROM students_courses WHERE student_id = #{studentId}")
-  List<StudentsCourses> searchStudentCourseById(@Param("studentId") int studentId);
+  List<StudentCourse> searchStudentCourseById(@Param("studentId") int studentId);
 
   /**
    * コース情報検索　選択されたコースIDと一致するコース情報を検索する。
@@ -95,7 +95,7 @@ public interface StudentRepository {
       "</foreach>",
       "</script>"
   })
-  List<Courses> searchCoursesById(@Param("courseIds") List<Integer> courseIds);
+  List<Course> searchCoursesById(@Param("courseIds") List<Integer> courseIds);
 
 
   /**

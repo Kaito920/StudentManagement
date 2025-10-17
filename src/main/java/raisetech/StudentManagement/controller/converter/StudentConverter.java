@@ -8,9 +8,9 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
-import raisetech.StudentManagement.data.Courses;
+import raisetech.StudentManagement.data.Course;
 import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentsCourses;
+import raisetech.StudentManagement.data.StudentCourse;
 import raisetech.StudentManagement.domain.StudentDetail;
 
 /**
@@ -22,32 +22,32 @@ public class StudentConverter {
   /**
    * 受講生に紐づく受講生コース情報をマッピングする
    *
-   * @param students        受講生一覧
-   * @param studentsCourses 受講生コース情報のリスト
+   * @param studentList        受講生一覧
+   * @param studentCourseList 受講生コース情報のリスト
    * @param courses         コース情報のリスト
    * @return 受講生詳細のリスト
    */
-  public List<StudentDetail> convertStudentDetails(List<Student> students,
-      List<StudentsCourses> studentsCourses, List<Courses> courses) {
+  public List<StudentDetail> convertStudentDetails(List<Student> studentList,
+      List<StudentCourse> studentCourseList, List<Course> courses) {
     List<StudentDetail> studentDetails = new ArrayList<>();
 
-    Map<Integer, Courses> courseMap = courses.stream()
-        .collect(Collectors.toMap(Courses::getCourseId, Function.identity()));
+    Map<Integer, Course> courseMap = courses.stream()
+        .collect(Collectors.toMap(Course::getCourseId, Function.identity()));
 
-    students.forEach(student -> {
+    studentList.forEach(student -> {
       StudentDetail studentDetail = new StudentDetail();
       studentDetail.setStudent(student);
 
-      List<StudentsCourses> convertStudentsCourses = studentsCourses.stream()
+      List<StudentCourse> convertStudentCourseList = studentCourseList.stream()
           .filter(studentsCourse -> student.getStudentId() == studentsCourse.getStudentId())
           .collect(Collectors.toList());
-      studentDetail.setStudentsCourses(convertStudentsCourses);
+      studentDetail.setStudentCourseList(convertStudentCourseList);
 
-      List<Courses> studentCourses = convertStudentsCourses.stream()
+      List<Course> studentCourses = convertStudentCourseList.stream()
           .map(sc -> courseMap.get(sc.getCourseId()))
           .filter(Objects::nonNull) // 念のため null を除外
           .collect(Collectors.toList());
-      studentDetail.setCourses(studentCourses);
+      studentDetail.setCourseList(studentCourses);
 
       studentDetails.add(studentDetail);
     });
@@ -56,20 +56,20 @@ public class StudentConverter {
 
   //個別表示用
   public StudentDetail convertStudentDetails(Student student,
-      List<StudentsCourses> studentsCourses, List<Courses> courses) {
+      List<StudentCourse> studentsCourses, List<Course> courses) {
     StudentDetail studentDetail = new StudentDetail();
     studentDetail.setStudent(student);
-    studentDetail.setStudentsCourses(studentsCourses);
+    studentDetail.setStudentCourseList(studentsCourses);
 
-    Map<Integer, Courses> courseMap = courses.stream()
-        .collect(Collectors.toMap(Courses::getCourseId, Function.identity()));
+    Map<Integer, Course> courseMap = courses.stream()
+        .collect(Collectors.toMap(Course::getCourseId, Function.identity()));
 
-    List<Courses> studentCourses = studentsCourses.stream()
+    List<Course> studentCourses = studentsCourses.stream()
         .map(sc -> courseMap.get(sc.getCourseId()))
         .filter(Objects::nonNull)
         .toList();
 
-    studentDetail.setCourses(courses);
+    studentDetail.setCourseList(courses);
 
     return studentDetail;
   }
@@ -87,11 +87,11 @@ public class StudentConverter {
     return student;
   }
 
-  public List<StudentsCourses> convertToStudentsCourses(StudentDetail detail) {
-    List<StudentsCourses> studentsCourses = new ArrayList<>();
+  public List<StudentCourse> convertToStudentsCourses(StudentDetail detail) {
+    List<StudentCourse> studentsCourses = new ArrayList<>();
 
     for (Integer courseIds : detail.getCourseIds()) {
-      StudentsCourses sc = new StudentsCourses();
+      StudentCourse sc = new StudentCourse();
       sc.setStudentId(detail.getStudent().getStudentId());
       sc.setCourseId(courseIds);
       sc.setStartDate(LocalDate.now());
