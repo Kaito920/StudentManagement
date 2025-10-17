@@ -13,7 +13,7 @@ import raisetech.StudentManagement.data.Student;
 import raisetech.StudentManagement.data.StudentCourse;
 import raisetech.StudentManagement.domain.StudentDetail;
 import raisetech.StudentManagement.domain.UpdateStudentField;
-import raisetech.StudentManagement.repoitory.StudentRepository;
+import raisetech.StudentManagement.repository.StudentRepository;
 
 /**
  * 受講生情報を取り扱うサービス 受講生情報の検索、登録、更新を行います。
@@ -56,7 +56,7 @@ public class StudentService {
    * @return 受講生コース情報一覧（全件）
    */
   public List<StudentCourse> searchStudentCourseList() {
-    return repository.searchStudentsCourse();
+    return repository.searchStudentsCourses();
 
   }
 
@@ -67,7 +67,7 @@ public class StudentService {
    * @return 受講コース情報
    */
   public List<StudentCourse> searchStudentCourseByStudentId(int studentId) {
-    return repository.searchStudentCourseById(studentId);
+    return repository.searchStudentsCoursesById(studentId);
   }
 
   /**
@@ -87,7 +87,7 @@ public class StudentService {
    * @return コース情報
    */
   public List<Course> searchCourseByStudentId(int studentId) {
-    List<StudentCourse> studentsCourses = repository.searchStudentCourseById(studentId);
+    List<StudentCourse> studentsCourses = repository.searchStudentsCoursesById(studentId);
     List<Integer> courseIds = studentsCourses.stream()
         .map(StudentCourse::getCourseId)
         .toList();
