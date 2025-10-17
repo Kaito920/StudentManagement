@@ -21,13 +21,14 @@ public class StudentConverter {
 
   /**
    * 受講生に紐づく受講生コース情報をマッピングする
-   * @param students 受講生一覧
+   *
+   * @param students        受講生一覧
    * @param studentsCourses 受講生コース情報のリスト
-   * @param courses コース情報のリスト
+   * @param courses         コース情報のリスト
    * @return 受講生詳細のリスト
    */
   public List<StudentDetail> convertStudentDetails(List<Student> students,
-      List<StudentsCourses> studentsCourses,List<Courses> courses) {
+      List<StudentsCourses> studentsCourses, List<Courses> courses) {
     List<StudentDetail> studentDetails = new ArrayList<>();
 
     Map<Integer, Courses> courseMap = courses.stream()
@@ -38,7 +39,7 @@ public class StudentConverter {
       studentDetail.setStudent(student);
 
       List<StudentsCourses> convertStudentsCourses = studentsCourses.stream()
-          .filter(studentsCourse -> student.getStudentId()==studentsCourse.getStudentId())
+          .filter(studentsCourse -> student.getStudentId() == studentsCourse.getStudentId())
           .collect(Collectors.toList());
       studentDetail.setStudentsCourses(convertStudentsCourses);
 
@@ -55,7 +56,7 @@ public class StudentConverter {
 
   //個別表示用
   public StudentDetail convertStudentDetails(Student student,
-      List<StudentsCourses> studentsCourses,List<Courses> courses){
+      List<StudentsCourses> studentsCourses, List<Courses> courses) {
     StudentDetail studentDetail = new StudentDetail();
     studentDetail.setStudent(student);
     studentDetail.setStudentsCourses(studentsCourses);
@@ -100,9 +101,6 @@ public class StudentConverter {
 
     return studentsCourses;
   }
-
-
-
 
 
 }

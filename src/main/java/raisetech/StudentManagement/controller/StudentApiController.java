@@ -112,6 +112,7 @@ public class StudentApiController {
 
   /**
    * 受講生の論理削除または復元　指定した受講生に対し削除フラグの切り替えを行う。
+   *
    * @param request フラグの切り替えリクエスト（削除or復元）
    * @return 更新後の受講生一覧
    */
