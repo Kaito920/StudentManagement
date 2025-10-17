@@ -195,12 +195,39 @@ public class StudentService {
     List<Integer> newCourseIds = request.getCourseIds();
 
     //現在の受講コース取得
-    List<StudentCourse> studentCourseList = repository.searchStudentCourseById(studentId);
-    List<Integer> currentCourseIds = studentCourseList.stream()
-        .map(StudentCourse::getCourseId)
-        .toList();
+    List<Course> currentCourse = searchCourseByStudentId(studentId);
+    List<Integer> currentCourseIds = getCourseIds(currentCourse);
 
     //追加する受講コース
+    insertCourse(newCourseIds, currentCourseIds, studentId);
+
+    //削除する受講コース
+    deleteCourses(currentCourseIds, newCourseIds, studentId);
+
+    return getStudentDetail(studentId);
+  }
+
+  /**
+   * 現在の受講コースからコースIDを抽出するメソッド
+   *
+   * @param courses 現在登録されているコース
+   * @return 現在登録されているコースからコースIDを抽出しリスト化したもの
+   */
+  private List<Integer> getCourseIds(List<Course> courses) {
+    return courses.stream()
+        .map(Course::getCourseId)
+        .toList();
+  }
+
+  /**
+   * 新たに受講コースを追加するメソッド
+   *
+   * @param newCourseIds     新たに登録するコースのID
+   * @param currentCourseIds 現在登録されているコースのID
+   * @param studentId        対象の受講生ID
+   */
+  private void insertCourse(List<Integer> newCourseIds, List<Integer> currentCourseIds,
+      int studentId) {
     List<Integer> toInsert = newCourseIds.stream()
         .filter(id -> !currentCourseIds.contains(id))
         .toList();
@@ -212,16 +239,23 @@ public class StudentService {
       newCourses.setEndDate(LocalDate.now().plusMonths(3));
       repository.registerCourse(newCourses);
     }
+  }
 
-    //削除する受講コース
+  /**
+   * コースリストのうち、新規登録に含まれていないものを削除するメソッド
+   *
+   * @param currentCourseIds 現在登録しているコースのID
+   * @param newCourseIds     新たに登録するコースのID
+   * @param studentId        対象の受講生ID
+   */
+  private void deleteCourses(List<Integer> currentCourseIds, List<Integer> newCourseIds,
+      int studentId) {
     List<Integer> toDelete = currentCourseIds.stream()
         .filter(id -> !newCourseIds.contains(id))
         .toList();
     for (Integer courseId : toDelete) {
       repository.deleteStudentCourse(studentId, courseId);
     }
-
-    return getStudentDetail(studentId);
   }
 
   /**
