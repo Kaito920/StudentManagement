@@ -4,6 +4,7 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -20,6 +21,7 @@ import raisetech.StudentManagement.service.StudentService;
 /**
  * 受講生の検索、登録、更新を行うREST APIとして受け付けるController
  */
+@Validated
 @RestController
 public class StudentApiController {
 
