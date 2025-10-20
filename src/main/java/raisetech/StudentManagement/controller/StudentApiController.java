@@ -40,8 +40,8 @@ public class StudentApiController {
    * @return 受講生一覧（全件）
    */
   @GetMapping("/api/students")
-  public List<StudentDetail> getStudentList() {
-    return service.getStudentDetail();
+  public ResponseEntity<List<StudentDetail>> getStudentList() {
+    return  ResponseEntity.ok(service.getStudentDetail());
   }
 
   /**
@@ -127,6 +127,4 @@ public class StudentApiController {
     );
     return ResponseEntity.ok(studentList);
   }
-
-
 }

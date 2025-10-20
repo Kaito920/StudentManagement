@@ -1,5 +1,6 @@
 package raisetech.StudentManagement.domain;
 
+import jakarta.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
@@ -16,8 +17,13 @@ import raisetech.StudentManagement.data.StudentCourse;
 @AllArgsConstructor
 public class StudentDetail {
 
+  @Valid
   private Student student;
+
+  @Valid
   private List<StudentCourse> studentCourseList = new ArrayList<>();
+
+  @Valid
   private List<Course> courseList = new ArrayList<>();
 
   // フォームから選択されたコースIDを受け取る

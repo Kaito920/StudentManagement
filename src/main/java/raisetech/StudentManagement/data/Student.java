@@ -13,7 +13,7 @@ import lombok.Setter;
 @Setter
 
 public class Student {
-  @NotNull
+
   private int studentId;
 
   @NotBlank

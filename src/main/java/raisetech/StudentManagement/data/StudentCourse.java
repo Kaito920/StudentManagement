@@ -9,10 +9,18 @@ import lombok.Setter;
 
 public class StudentCourse {
 
+
   private int courseId;
+
+
   private int studentId;
+
+
   private LocalDate startDate;
+
+
   private LocalDate endDate;
+
 
   private Course courses;
 
