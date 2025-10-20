@@ -90,13 +90,9 @@ public class StudentApiController {
    * @return 更新後の受講生情報（またはエラーメッセージ）
    */
   @PatchMapping("/api/students")
-  public ResponseEntity<?> updateField(@Valid @RequestBody UpdateStudentFieldRequest request) {
-    try {
+  public ResponseEntity<StudentDetail> updateField(@Valid @RequestBody UpdateStudentFieldRequest request) {
       StudentDetail updatedStudent = service.updateStudentField(request);
       return ResponseEntity.ok(updatedStudent);
-    } catch (IllegalArgumentException e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
-    }
   }
 
   /**

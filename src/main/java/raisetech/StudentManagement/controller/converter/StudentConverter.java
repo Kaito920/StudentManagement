@@ -69,7 +69,7 @@ public class StudentConverter {
         .filter(Objects::nonNull)
         .toList();
 
-    studentDetail.setCourseList(courses);
+    studentDetail.setCourseList(studentCourses);
 
     return studentDetail;
   }

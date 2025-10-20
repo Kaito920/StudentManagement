@@ -1,6 +1,7 @@
 package raisetech.StudentManagement.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -91,6 +92,10 @@ public class StudentService {
     List<Integer> courseIds = studentsCourses.stream()
         .map(StudentCourse::getCourseId)
         .toList();
+
+    if (courseIds.isEmpty()) {
+      return new ArrayList<>(); // 空のリストを返す
+    }
 
     return repository.searchCoursesById(courseIds);
   }
