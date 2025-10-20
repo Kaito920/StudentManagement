@@ -4,20 +4,24 @@ import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
+import raisetech.StudentManagement.controller.request.LogicalDeleteStudentRequest;
 import raisetech.StudentManagement.controller.request.UpdateStudentFieldRequest;
 import raisetech.StudentManagement.controller.request.UpdateStudentsCoursesRequest;
-import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentsCourses;
 import raisetech.StudentManagement.domain.StudentDetail;
-import raisetech.StudentManagement.domain.UpdateStudentField;
 import raisetech.StudentManagement.service.StudentService;
 
+/**
+ * 受講生の検索、登録、更新を行うREST APIとして受け付けるController
+ */
+@Validated
 @RestController
 public class StudentApiController {
 
@@ -30,60 +34,98 @@ public class StudentApiController {
     this.converter = converter;
   }
 
-  //受講生一覧表示
+  /**
+   * 受講生一覧検索 全件検索を行うため条件指定は行いません。
+   *
+   * @return 受講生一覧（全件）
+   */
   @GetMapping("/api/students")
   public List<StudentDetail> getStudentList() {
-    List<Student> students = service.searchStudentList();
-    List<StudentsCourses> studentsCourses = service.searchStudentsCourseList();
-
-    return converter.convertStudentDetails(students, studentsCourses);
+    return service.getStudentDetail();
   }
 
-  //新規登録：受講生情報登録
+  /**
+   * 受講生単一検索 studentIdに紐づく任意の受講生情報を取得します。
+   *
+   * @param studentId 　受講生ID
+   * @return 受講生情報
+   */
+  @GetMapping("/api/students/{studentId}")
+  public ResponseEntity<StudentDetail> getStudent(@PathVariable int studentId) {
+    return ResponseEntity.ok(service.getStudentDetail(studentId));
+  }
+
+  /**
+   * 新規登録：受講生登録 入力した情報を持つ受講生を新たに登録します。
+   *
+   * @param studentDetail 登録する受講生の情報（名前、メールアドレスなど）
+   * @return 登録した受講生情報
+   */
   @PostMapping("/api/students")
-  public ResponseEntity<String> registerStudent(@Valid @RequestBody StudentDetail studentDetail) {
-    Student student = converter.convertToStudent(studentDetail);
-    service.registerStudent(student);
+  public ResponseEntity<StudentDetail> registerStudent(
+      @Valid @RequestBody StudentDetail studentDetail) {
+    StudentDetail registerStudent = service.registerStudent(studentDetail);
 
-    return ResponseEntity.ok("受講生登録が成功しました");
+    return ResponseEntity.ok(registerStudent);
   }
 
-
-  //新規登録：受講コース登録
+  /**
+   * 新規登録：受講コース登録
+   *
+   * @param studentDetail 受講生と登録されたコースの情報
+   * @return 登録後の受講生情報
+   */
   @PostMapping("/api/students/courses")
-  public ResponseEntity<String> registerCourse(@Valid @RequestBody StudentDetail studentDetail) {
-    List<StudentsCourses> studentsCourses = converter.convertToStudentsCourses(studentDetail);
-    service.registerCourse(studentsCourses);
+  public ResponseEntity<StudentDetail> registerCourse(
+      @Valid @RequestBody StudentDetail studentDetail) {
+    StudentDetail updateStudentDetail = service.registerCourse(studentDetail);
 
-    return ResponseEntity.ok("受講コースの登録が成功しました");
+    return ResponseEntity.ok(updateStudentDetail);
   }
 
-  //受講生情報更新処理(論理削除込み)
+  /**
+   * 受講生情報更新（論理削除を除く）
+   *
+   * @param request 更新内容（対象フィールドと更新値）
+   * @return 更新後の受講生情報（またはエラーメッセージ）
+   */
   @PatchMapping("/api/students")
-  public ResponseEntity<String> updateField(@Valid @RequestBody UpdateStudentFieldRequest request) {
-    int studentId = request.getStudentId();
-    String field = request.getField();
-    String value = request.getValue();
-
-    //ホワイトリストチェック
-    if (!UpdateStudentField.isValid(field)) {
-      return ResponseEntity
-          .badRequest()
-          .body("更新可能なフィールドではありません: " + field);
+  public ResponseEntity<?> updateField(@Valid @RequestBody UpdateStudentFieldRequest request) {
+    try {
+      StudentDetail updatedStudent = service.updateStudentField(request);
+      return ResponseEntity.ok(updatedStudent);
+    } catch (IllegalArgumentException e) {
+      return ResponseEntity.badRequest().body(e.getMessage());
     }
-
-    service.updateStudentField(studentId, field, value);
-    return ResponseEntity.ok("更新処理が成功しました");
   }
 
-  //受講コース更新
+  /**
+   * 受講コース更新 指定した受講生に対し受講コースを新たに再登録、または削除を行う
+   *
+   * @param request 受講生IDと更新後の受講コースID一覧
+   * @return 更新後の受講生詳細情報
+   */
   @PatchMapping("/api/students/courses")
-  public ResponseEntity<String> updateCourse(
+  public ResponseEntity<StudentDetail> updateCourse(
       @Valid @RequestBody UpdateStudentsCoursesRequest request) {
-    int studentId = request.getStudentId();
-    List<Integer> courseIds = request.getCourseIds();
-    service.updateCourse(studentId, courseIds);
-    return ResponseEntity.ok("受講コースの更新が成功しました");
+    StudentDetail updateStudentCourse = service.updateCourse(request);
+    return ResponseEntity.ok(updateStudentCourse);
+  }
+
+  /**
+   * 受講生の論理削除または復元　指定した受講生に対し削除フラグの切り替えを行う。
+   *
+   * @param request フラグの切り替えリクエスト（削除or復元）
+   * @return 更新後の受講生一覧
+   */
+  @PatchMapping("/api/students/logical-delete")
+  public ResponseEntity<List<StudentDetail>> logicalDeleteStudent(@Valid @RequestBody
+  LogicalDeleteStudentRequest request) {
+    List<StudentDetail> studentList = service.logicalDeleteStudent(
+        request.getToDeleteIds(),
+        request.getToRestoreIds()
+    );
+    return ResponseEntity.ok(studentList);
   }
 
 
