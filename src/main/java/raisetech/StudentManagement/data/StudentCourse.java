@@ -22,6 +22,6 @@ public class StudentCourse {
   private LocalDate endDate;
 
 
-  private Course courses;
+  private Course course;
 
 }

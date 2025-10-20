@@ -175,7 +175,7 @@ public class StudentService {
     }
 
     if ("gender".equals(field)) {
-      if (!value.matches("^(男性|女性|その他)$")) {
+      if (value == null || value.trim().isEmpty() ||!value.matches("^(男性|女性|その他)$")) {
         throw new IllegalArgumentException("性別は「男性」「女性」「その他」のいずれかを指定してください");
       }
     }

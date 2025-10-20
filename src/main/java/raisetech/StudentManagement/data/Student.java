@@ -36,6 +36,7 @@ public class Student {
   private int age;
 
   @Size(max = 10)
+  @NotNull
   @Pattern(regexp = "^(男性|女性|その他)?$", message = "性別は「男性」「女性」「その他」のいずれかを指定してください")
   private String gender;
 
