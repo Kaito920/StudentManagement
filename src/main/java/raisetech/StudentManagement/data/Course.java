@@ -1,5 +1,6 @@
 package raisetech.StudentManagement.data;
 
+import jakarta.validation.constraints.NotBlank;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,7 +10,11 @@ import lombok.Setter;
 public class Course {
 
   private int courseId;
+
+  @NotBlank
   private String courseName;
+
+
   private String description;
 
 

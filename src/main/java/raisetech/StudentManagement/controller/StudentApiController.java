@@ -40,8 +40,8 @@ public class StudentApiController {
    * @return 受講生一覧（全件）
    */
   @GetMapping("/api/students")
-  public List<StudentDetail> getStudentList() {
-    return service.getStudentDetail();
+  public ResponseEntity<List<StudentDetail>> getStudentList() {
+    return  ResponseEntity.ok(service.getStudentDetail());
   }
 
   /**
@@ -90,13 +90,9 @@ public class StudentApiController {
    * @return 更新後の受講生情報（またはエラーメッセージ）
    */
   @PatchMapping("/api/students")
-  public ResponseEntity<?> updateField(@Valid @RequestBody UpdateStudentFieldRequest request) {
-    try {
+  public ResponseEntity<StudentDetail> updateField(@Valid @RequestBody UpdateStudentFieldRequest request) {
       StudentDetail updatedStudent = service.updateStudentField(request);
       return ResponseEntity.ok(updatedStudent);
-    } catch (IllegalArgumentException e) {
-      return ResponseEntity.badRequest().body(e.getMessage());
-    }
   }
 
   /**
@@ -127,6 +123,4 @@ public class StudentApiController {
     );
     return ResponseEntity.ok(studentList);
   }
-
-
 }

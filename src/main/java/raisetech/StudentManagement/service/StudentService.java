@@ -1,6 +1,7 @@
 package raisetech.StudentManagement.service;
 
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -92,6 +93,10 @@ public class StudentService {
         .map(StudentCourse::getCourseId)
         .toList();
 
+    if (courseIds.isEmpty()) {
+      return new ArrayList<>(); // 空のリストを返す
+    }
+
     return repository.searchCoursesById(courseIds);
   }
 
@@ -167,6 +172,12 @@ public class StudentService {
 
     if (!UpdateStudentField.isValid(field)) {
       throw new IllegalArgumentException("更新可能なフィールドではありません: " + field);
+    }
+
+    if ("gender".equals(field)) {
+      if (value == null || value.trim().isEmpty() ||!value.matches("^(男性|女性|その他)$")) {
+        throw new IllegalArgumentException("性別は「男性」「女性」「その他」のいずれかを指定してください");
+      }
     }
 
     switch (field) {
