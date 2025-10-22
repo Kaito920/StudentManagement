@@ -1,5 +1,6 @@
 package raisetech.StudentManagement.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
 import jakarta.validation.Valid;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,7 @@ public class StudentApiController {
    *
    * @return 受講生一覧（全件）
    */
+  @Operation(summary = "一覧検索",description = "受講生の一覧を検索します。")
   @GetMapping("/api/students")
   public ResponseEntity<List<StudentDetail>> getStudentList() {
     return  ResponseEntity.ok(service.getStudentDetail());
@@ -50,6 +52,7 @@ public class StudentApiController {
    * @param studentId 　受講生ID
    * @return 受講生情報
    */
+  @Operation(summary = "受講生検索",description = "受講生IDに紐づく受講生情報を検索します。")
   @GetMapping("/api/students/{studentId}")
   public ResponseEntity<StudentDetail> getStudent(@PathVariable int studentId) {
     return ResponseEntity.ok(service.getStudentDetail(studentId));
@@ -61,6 +64,7 @@ public class StudentApiController {
    * @param studentDetail 登録する受講生の情報（名前、メールアドレスなど）
    * @return 登録した受講生情報
    */
+  @Operation(summary = "受講生登録",description = "新規受講生を登録します。")
   @PostMapping("/api/students")
   public ResponseEntity<StudentDetail> registerStudent(
       @Valid @RequestBody StudentDetail studentDetail) {
@@ -75,6 +79,7 @@ public class StudentApiController {
    * @param studentDetail 受講生と登録されたコースの情報
    * @return 登録後の受講生情報
    */
+  @Operation(summary = "受講コース登録",description = "選択した受講生に任意の受講コースを登録します。")
   @PostMapping("/api/students/courses")
   public ResponseEntity<StudentDetail> registerCourse(
       @Valid @RequestBody StudentDetail studentDetail) {
@@ -89,6 +94,7 @@ public class StudentApiController {
    * @param request 更新内容（対象フィールドと更新値）
    * @return 更新後の受講生情報（またはエラーメッセージ）
    */
+  @Operation(summary = "受講生情報更新",description = "選択した受講生の持つ情報を任意に一つ更新します。")
   @PatchMapping("/api/students")
   public ResponseEntity<StudentDetail> updateField(@Valid @RequestBody UpdateStudentFieldRequest request) {
       StudentDetail updatedStudent = service.updateStudentField(request);
@@ -101,6 +107,7 @@ public class StudentApiController {
    * @param request 受講生IDと更新後の受講コースID一覧
    * @return 更新後の受講生詳細情報
    */
+  @Operation(summary = "受講コース更新",description = "選択した受講生の持つコース情報を更新します。")
   @PatchMapping("/api/students/courses")
   public ResponseEntity<StudentDetail> updateCourse(
       @Valid @RequestBody UpdateStudentsCoursesRequest request) {
@@ -114,6 +121,7 @@ public class StudentApiController {
    * @param request フラグの切り替えリクエスト（削除or復元）
    * @return 更新後の受講生一覧
    */
+  @Operation(summary = "受講生削除（論理）",description = "選択した受講生の論理削除、または復元を行います。")
   @PatchMapping("/api/students/logical-delete")
   public ResponseEntity<List<StudentDetail>> logicalDeleteStudent(@Valid @RequestBody
   LogicalDeleteStudentRequest request) {
