@@ -8,11 +8,14 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyList;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
@@ -23,6 +26,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.dao.EmptyResultDataAccessException;
 import raisetech.StudentManagement.controller.converter.StudentConverter;
 import raisetech.StudentManagement.controller.request.UpdateStudentFieldRequest;
 import raisetech.StudentManagement.controller.request.UpdateStudentsCoursesRequest;
@@ -347,7 +351,7 @@ class StudentServiceTest {
    * - 既存受講コース削除
    */
   @Test
-  void updateCourse_正常系_コース削除_依存関係関係(){
+  void updateCourse_正常系_コース削除_依存関係(){
     int studentId = 1;
     List<Course> currentCourse = new ArrayList<>();
     Course course1 = new Course();
@@ -356,6 +360,7 @@ class StudentServiceTest {
     course2.setCourseId(2);
     currentCourse.add(course1);
     currentCourse.add(course2);
+
 
     List<Integer> newCourseIds = new ArrayList<>();
     StudentDetail expectedStudentDetail = new StudentDetail();
@@ -383,6 +388,31 @@ class StudentServiceTest {
    */
   @Test
   void updateCourse_正常系_コース追加削除同時_依存関係関係(){
+    int studentId = 1;
+    List<Course> currentCourse = new ArrayList<>();
+    Course course1 = new Course();
+    Course course2 = new Course();
+    course1.setCourseId(1);
+    course2.setCourseId(2);
+    currentCourse.add(course1);
+    currentCourse.add(course2);
+    List<Integer> newCourseIds = List.of(3,4);
+    StudentDetail expectedStudentDetail = new StudentDetail();
+
+    doReturn(currentCourse).when(sut).searchCourseByStudentId(studentId);
+    doReturn(expectedStudentDetail).when(sut).getStudentDetail(studentId);
+
+    UpdateStudentsCoursesRequest request = new UpdateStudentsCoursesRequest();
+    request.setStudentId(studentId);
+    request.setCourseIds(newCourseIds);
+
+    StudentDetail actual = sut.updateCourse(request);
+
+    verify(repository, times(2)).registerCourse(any(StudentCourse.class));
+    verify(repository, times(1)).deleteStudentCourse(studentId, course1.getCourseId());
+    verify(repository, times(1)).deleteStudentCourse(studentId, course2.getCourseId());
+    verify(sut, times(1)).getStudentDetail(studentId);
+    assertSame(expectedStudentDetail, actual);
   }
 
   /**
@@ -391,6 +421,24 @@ class StudentServiceTest {
    */
   @Test
   void updateCourse_正常系_差分なし_依存関係関係(){
+    int studentId = 1;
+    List<Course> currentCourse = new ArrayList<>();
+    List<Integer> newCourseIds = new ArrayList<>();
+    StudentDetail expectedStudentDetail = new StudentDetail();
+
+    doReturn(currentCourse).when(sut).searchCourseByStudentId(studentId);
+    doReturn(expectedStudentDetail).when(sut).getStudentDetail(studentId);
+
+    UpdateStudentsCoursesRequest request = new UpdateStudentsCoursesRequest();
+    request.setStudentId(studentId);
+    request.setCourseIds(newCourseIds);
+
+    StudentDetail actual = sut.updateCourse(request);
+
+    verify(repository, never()).registerCourse(any(StudentCourse.class));
+    verify(repository, never()).deleteStudentCourse(anyInt(),anyInt());
+    verify(sut, times(1)).getStudentDetail(studentId);
+    assertSame(expectedStudentDetail, actual);
   }
 
   /**
@@ -399,6 +447,24 @@ class StudentServiceTest {
    */
   @Test
   void updateCourse_異常系_studentId_依存関係関係(){
+    int studentId = 999;
+    List<Integer> newCourseIds = List.of(1, 2);
+
+    UpdateStudentsCoursesRequest request = new UpdateStudentsCoursesRequest();
+    request.setStudentId(studentId);
+    request.setCourseIds(newCourseIds);
+
+    doThrow(new EmptyResultDataAccessException("Student not found",1))
+        .when(sut).searchCourseByStudentId(studentId);
+
+    assertThrows(EmptyResultDataAccessException.class,
+        () -> sut.updateCourse(request),
+        "存在しない studentId の場合は EntityNotFoundException が発生するべき");
+
+    verify(repository, never()).registerCourse(any(StudentCourse.class));
+    verify(repository, never()).deleteStudentCourse(anyInt(), anyInt());
+    verifyNoMoreInteractions(repository);
+
   }
 
   /**
@@ -407,10 +473,120 @@ class StudentServiceTest {
    */
   @Test
   void updateCourse_異常系_courseId_依存関係関係(){
+    int studentId = 1;
+    List<Integer> newCourseIds = List.of(999);
+
+    UpdateStudentsCoursesRequest request = new UpdateStudentsCoursesRequest();
+    request.setStudentId(studentId);
+    request.setCourseIds(newCourseIds);
+
+    doReturn(new ArrayList<>()).when(sut).searchCourseByStudentId(studentId);
+
+    doThrow(new EmptyResultDataAccessException("Course not found", 1))
+        .when(repository).registerCourse(any(StudentCourse.class));
+
+    assertThrows(EmptyResultDataAccessException.class,
+        () -> sut.updateCourse(request),
+        "存在しない courseId の場合は EmptyResultDataAccessException が発生するべき");
+
+    verify(repository, times(1)).registerCourse(any(StudentCourse.class));
+    verify(repository, never()).deleteStudentCourse(anyInt(), anyInt());
+    verifyNoMoreInteractions(repository);
+  }
+
+  /**
+   * 受講生論理削除の正常系テスト
+   * - 削除のみの場合
+   */
+  @Test
+  void logicalDeleteStudent_正常系_削除のみ(){
+    List<Integer> toDeleteIds = List.of(1,2);
+    List<Integer> toRestoreIds = new ArrayList<>();
+
+   List<StudentDetail> expectedStudentDetail = new ArrayList<>();
+
+    doReturn(expectedStudentDetail).when(sut).getStudentDetail();
+
+    List<StudentDetail> actual = sut.logicalDeleteStudent(toDeleteIds, toRestoreIds);
+
+    verify(repository, times(toDeleteIds.size())).logicalDeleteStudent(anyInt(), eq(true));
+    verify(repository, never()).logicalDeleteStudent(anyInt(), eq(false));
+    verify(sut).getStudentDetail();
+
+    assertSame(expectedStudentDetail, actual);
+  }
+
+  /**
+   * 受講生論理削除の正常系テスト
+   *- 復元のみの場合
+   */
+  @Test
+  void logicalDeleteStudent_正常系_復元のみ(){
+    List<Integer> toDeleteIds = new ArrayList<>();
+    List<Integer> toRestoreIds = List.of(3,4);
+
+    List<StudentDetail> expectedStudentDetail = new ArrayList<>();
+
+    doReturn(expectedStudentDetail).when(sut).getStudentDetail();
+
+    List<StudentDetail> actual = sut.logicalDeleteStudent(toDeleteIds, toRestoreIds);
+
+    verify(repository, never()).logicalDeleteStudent(anyInt(), eq(true));
+    verify(repository, times(toRestoreIds.size())).logicalDeleteStudent(anyInt(), eq(false));
+    verify(sut).getStudentDetail();
+
+    assertSame(expectedStudentDetail, actual);
+  }
+
+  /**
+   * 受講生論理削除の正常系テスト
+   *- 復元と削除両方の場合
+   */
+  @Test
+  void logicalDeleteStudent_正常系_削除復元両方(){
+    List<Integer> toDeleteIds = List.of(1,2);
+    List<Integer> toRestoreIds = List.of(3,4);
+
+    List<StudentDetail> expectedStudentDetail = new ArrayList<>();
+
+    doReturn(expectedStudentDetail).when(sut).getStudentDetail();
+
+    List<StudentDetail> actual = sut.logicalDeleteStudent(toDeleteIds, toRestoreIds);
+
+    verify(repository, times(toDeleteIds.size())).logicalDeleteStudent(anyInt(), eq(true));
+    verify(repository, times(toRestoreIds.size())).logicalDeleteStudent(anyInt(), eq(false));
+    verify(sut).getStudentDetail();
+
+    assertSame(expectedStudentDetail, actual);
+  }
+
+  /**
+   * 受講生論理削除の正常系テスト
+   *- 両方がnullの場合
+   */
+  @Test
+  void logicalDeleteStudent_正常系_両方null(){
+    List<Integer> toDeleteIds = null;
+    List<Integer> toRestoreIds = null;
+
+    List<StudentDetail> expectedStudentDetail = new ArrayList<>();
+
+    doReturn(expectedStudentDetail).when(sut).getStudentDetail();
+
+    List<StudentDetail> actual = sut.logicalDeleteStudent(toDeleteIds, toRestoreIds);
+
+    verify(repository, never()).logicalDeleteStudent(anyInt(), eq(true));
+    verify(repository, never()).logicalDeleteStudent(anyInt(), eq(false));
+    verify(sut).getStudentDetail();
+
+    assertSame(expectedStudentDetail, actual);
+  }
+
+
   }
 
 
 
 
-}
+
 
