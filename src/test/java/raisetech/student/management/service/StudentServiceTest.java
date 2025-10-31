@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.service;
+package raisetech.student.management.service;
 
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -27,14 +27,14 @@ import org.mockito.Mock;
 import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.EmptyResultDataAccessException;
-import raisetech.StudentManagement.controller.converter.StudentConverter;
-import raisetech.StudentManagement.controller.request.UpdateStudentFieldRequest;
-import raisetech.StudentManagement.controller.request.UpdateStudentsCoursesRequest;
-import raisetech.StudentManagement.data.Course;
-import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentCourse;
-import raisetech.StudentManagement.domain.StudentDetail;
-import raisetech.StudentManagement.repository.StudentRepository;
+import raisetech.student.management.controller.converter.StudentConverter;
+import raisetech.student.management.controller.request.UpdateStudentFieldRequest;
+import raisetech.student.management.controller.request.UpdateStudentsCoursesRequest;
+import raisetech.student.management.data.Course;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.repository.StudentRepository;
 
 @ExtendWith(MockitoExtension.class)
 class StudentServiceTest {

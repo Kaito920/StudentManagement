@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.controller.converter;
+package raisetech.student.management.controller.converter;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -8,10 +8,10 @@ import java.util.Objects;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 import org.springframework.stereotype.Component;
-import raisetech.StudentManagement.data.Course;
-import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentCourse;
-import raisetech.StudentManagement.domain.StudentDetail;
+import raisetech.student.management.data.Course;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.domain.StudentDetail;
 
 /**
  * 受講生詳細を受講生や受講生コース情報、コース情報もしくはその逆の変換を行うコンバーター

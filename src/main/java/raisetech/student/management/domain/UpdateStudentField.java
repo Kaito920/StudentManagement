@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.domain;
+package raisetech.student.management.domain;
 
 import lombok.Getter;
 

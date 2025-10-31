@@ -1,4 +1,4 @@
-package raisetech.StudentManagement;
+package raisetech.student.management;
 
 
 import io.swagger.v3.oas.annotations.OpenAPIDefinition;

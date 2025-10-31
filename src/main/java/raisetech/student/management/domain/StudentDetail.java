@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.domain;
+package raisetech.student.management.domain;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
@@ -8,9 +8,9 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import raisetech.StudentManagement.data.Course;
-import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentCourse;
+import raisetech.student.management.data.Course;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
 
 @Schema(description = "受講生詳細")
 @Getter

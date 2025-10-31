@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.controller.request;
+package raisetech.student.management.controller.request;
 
 import lombok.Getter;
 import lombok.Setter;
