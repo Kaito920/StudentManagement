@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.controller;
+package raisetech.student.management.controller;
 
 import java.util.HashMap;
 import java.util.Map;

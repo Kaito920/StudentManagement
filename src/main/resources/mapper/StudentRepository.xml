@@ -1,25 +1,25 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
   "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
-<mapper namespace="raisetech.StudentManagement.repository.StudentRepository">
+<mapper namespace="raisetech.student.management.repository.StudentRepository">
 
   <!-- 受講生の全件検索 -->
-  <select id="searchStudent" resultType="raisetech.StudentManagement.data.Student">
+  <select id="searchStudent" resultType="raisetech.student.management.data.Student">
     SELECT * FROM students
   </select>
 
   <!-- 受講生単一検索 -->
-  <select id="searchStudentById" resultType="raisetech.StudentManagement.data.Student">
+  <select id="searchStudentById" resultType="raisetech.student.management.data.Student">
     SELECT * FROM students WHERE student_id = #{studentId}
   </select>
 
   <!-- コース情報一覧検索 -->
-  <select id="searchCourse" resultType="raisetech.StudentManagement.data.Course">
+  <select id="searchCourse" resultType="raisetech.student.management.data.Course">
     SELECT * FROM courses
   </select>
 
   <!-- コース情報検索 -->
-  <select id="searchCoursesById" resultType="raisetech.StudentManagement.data.Course">
+  <select id="searchCoursesById" resultType="raisetech.student.management.data.Course">
     SELECT * FROM courses WHERE course_id IN
     <foreach item="id" collection="courseIds" open="(" separator="," close=")">
       #{id}
@@ -27,25 +27,25 @@
   </select>
 
   <!-- 受講コース情報一覧検索 -->
-  <select id="searchStudentsCourses" resultType="raisetech.StudentManagement.data.StudentCourse">
+  <select id="searchStudentsCourses" resultType="raisetech.student.management.data.StudentCourse">
     SELECT * FROM students_courses
   </select>
 
   <!-- 受講コース情報検索 -->
   <select id="searchStudentsCoursesById"
-    resultType="raisetech.StudentManagement.data.StudentCourse">
+    resultType="raisetech.student.management.data.StudentCourse">
     SELECT * FROM students_courses WHERE student_id = #{studentId}
   </select>
 
   <!-- 新規受講生登録 -->
-  <insert id="registerStudent" parameterType="raisetech.StudentManagement.data.Student"
+  <insert id="registerStudent" parameterType="raisetech.student.management.data.Student"
     useGeneratedKeys="true" keyProperty="studentId">
     INSERT INTO students(name,furigana,nickname,mail_address,address,age,gender,remark,isDeleted)
     VALUES(#{name},#{furigana},#{nickname},#{mailAddress},#{address},#{age},#{gender},#{remark},false)
   </insert>
 
   <!-- 新規受講コース登録 -->
-  <insert id="registerCourse" parameterType="raisetech.StudentManagement.data.StudentCourse">
+  <insert id="registerCourse" parameterType="raisetech.student.management.data.StudentCourse">
     INSERT INTO students_courses(student_ID,course_ID,start_date,end_date)
     VALUES(#{studentId},#{courseId},#{startDate},#{endDate})
   </insert>

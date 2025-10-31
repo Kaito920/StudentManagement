@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.service;
+package raisetech.student.management.service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -6,15 +6,15 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import raisetech.StudentManagement.controller.converter.StudentConverter;
-import raisetech.StudentManagement.controller.request.UpdateStudentFieldRequest;
-import raisetech.StudentManagement.controller.request.UpdateStudentsCoursesRequest;
-import raisetech.StudentManagement.data.Course;
-import raisetech.StudentManagement.data.Student;
-import raisetech.StudentManagement.data.StudentCourse;
-import raisetech.StudentManagement.domain.StudentDetail;
-import raisetech.StudentManagement.domain.UpdateStudentField;
-import raisetech.StudentManagement.repository.StudentRepository;
+import raisetech.student.management.controller.converter.StudentConverter;
+import raisetech.student.management.controller.request.UpdateStudentFieldRequest;
+import raisetech.student.management.controller.request.UpdateStudentsCoursesRequest;
+import raisetech.student.management.data.Course;
+import raisetech.student.management.data.Student;
+import raisetech.student.management.data.StudentCourse;
+import raisetech.student.management.domain.StudentDetail;
+import raisetech.student.management.domain.UpdateStudentField;
+import raisetech.student.management.repository.StudentRepository;
 
 /**
  * 受講生情報を取り扱うサービス 受講生情報の検索、登録、更新を行います。

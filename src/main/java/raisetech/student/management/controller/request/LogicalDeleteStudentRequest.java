@@ -1,4 +1,4 @@
-package raisetech.StudentManagement.controller.request;
+package raisetech.student.management.controller.request;
 
 import jakarta.validation.constraints.NotNull;
 import java.util.List;
