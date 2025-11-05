@@ -17,14 +17,17 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import java.util.List;
 import java.util.Set;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.InjectMocks;
+import org.mockito.Mock;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import raisetech.student.management.controller.converter.StudentConverter;
 import raisetech.student.management.controller.request.LogicalDeleteStudentRequest;
 import raisetech.student.management.controller.request.UpdateStudentFieldRequest;
@@ -33,17 +36,26 @@ import raisetech.student.management.data.Student;
 import raisetech.student.management.domain.StudentDetail;
 import raisetech.student.management.service.StudentService;
 
-@WebMvcTest(StudentApiController.class)
+@ExtendWith(MockitoExtension.class)
 class StudentApiControllerTest {
 
-  @Autowired
   private MockMvc mockMvc;
 
-  @MockBean
+  @Mock
   private StudentService service;
 
-  @MockBean
+  @Mock
   StudentConverter converter;
+
+  @InjectMocks
+  private StudentApiController controller;
+
+  @BeforeEach
+  void setup() {
+    mockMvc = MockMvcBuilders.standaloneSetup(controller)
+        .setControllerAdvice(new GlobalExceptionHandler())
+        .build();
+  }
 
   private Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
