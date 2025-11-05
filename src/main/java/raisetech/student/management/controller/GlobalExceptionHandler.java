@@ -2,6 +2,7 @@ package raisetech.student.management.controller;
 
 import java.util.HashMap;
 import java.util.Map;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
@@ -10,9 +11,11 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 
 @ControllerAdvice
 public class GlobalExceptionHandler {
+
   // 例1: バリデーションエラー用（@Validで失敗した時）
   @ExceptionHandler(MethodArgumentNotValidException.class)
-  public ResponseEntity<Map<String, String>> handleValidationErrors(MethodArgumentNotValidException ex) {
+  public ResponseEntity<Map<String, String>> handleValidationErrors(
+      MethodArgumentNotValidException ex) {
     Map<String, String> errors = new HashMap<>();
 
     ex.getBindingResult().getFieldErrors().forEach(error ->
@@ -38,5 +41,14 @@ public class GlobalExceptionHandler {
     error.put("error", "システムエラーが発生しました");
 
     return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
+  }
+
+  @ExceptionHandler(EmptyResultDataAccessException.class)
+  public ResponseEntity<Map<String, String>> handleNotFound(
+      EmptyResultDataAccessException exception) {
+    Map<String, String> error = new HashMap<>();
+    error.put("error", exception.getMessage());
+
+    return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
   }
 }
