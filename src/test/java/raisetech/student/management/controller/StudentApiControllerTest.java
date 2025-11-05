@@ -155,7 +155,7 @@ class StudentApiControllerTest {
 
     mockMvc.perform(get("/api/students/{studentId}", studentId))
         .andExpect(status().isNotFound())
-        .andExpect(jsonPath("$.error").value("Student Not Found"));
+        .andExpect(jsonPath("$.error").value("指定されたデータは存在しません。"));
 
     verify(service, times(1)).getStudentDetail(studentId);
   }
@@ -360,7 +360,7 @@ class StudentApiControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(new ObjectMapper().writeValueAsString(request)))
         .andExpect(status().isNotFound())
-        .andExpect(jsonPath("$.error").value("Student Not Found"));
+        .andExpect(jsonPath("$.error").value("指定されたデータは存在しません。"));
     verify(service, times(1)).updateCourse(any(UpdateStudentsCoursesRequest.class));
   }
 
@@ -401,7 +401,7 @@ class StudentApiControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .content(new ObjectMapper().writeValueAsString(request)))
         .andExpect(status().isNotFound())
-        .andExpect(jsonPath("$.error").value("Student Not Found"));
+        .andExpect(jsonPath("$.error").value("指定されたデータは存在しません。"));
     verify(service, times(1)).logicalDeleteStudent(request.getToDeleteIds(),request.getToRestoreIds());
   }
 

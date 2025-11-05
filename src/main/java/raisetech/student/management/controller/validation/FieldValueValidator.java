@@ -17,11 +17,15 @@ public class FieldValueValidator implements ConstraintValidator<ValidFieldValue,
     String field = request.getField();
     String value = request.getValue();
 
+    if (field == null || value == null) {
+      return false;
+    }
+
     return switch (field) {
       case "name", "furigana", "nickname", "address" -> !value.isBlank();
       case "remark"->value.length()<=200;
-      case "gender"->value.matches("^(男性|女性|その他)$");
-      case "mailAddress"->value.matches("^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$");
+      case "gender"-> value.matches("^(男性|女性|その他)$");
+      case "mailAddress" -> value.matches("^[\\w.%+-]+@[\\w.-]+\\.[a-zA-Z]{2,}$");
       case "age" -> value.matches("^[1-9][0-9]*$");
       default -> false;
     };

@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
   @ExceptionHandler(IllegalArgumentException.class)
   public ResponseEntity<Map<String, String>> handleIllegalArgument(IllegalArgumentException ex) {
     Map<String, String> error = new HashMap<>();
-    error.put("error", ex.getMessage());
+    error.put("error","入力値に誤りがあります。");
 
     return ResponseEntity.badRequest().body(error);
   }
@@ -47,7 +47,7 @@ public class GlobalExceptionHandler {
   public ResponseEntity<Map<String, String>> handleNotFound(
       EmptyResultDataAccessException exception) {
     Map<String, String> error = new HashMap<>();
-    error.put("error", exception.getMessage());
+    error.put("error","指定されたデータは存在しません。");
 
     return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
   }
