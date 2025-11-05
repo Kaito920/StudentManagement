@@ -1,9 +1,6 @@
 package raisetech.student.management.controller.request;
 
-import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.Pattern;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
