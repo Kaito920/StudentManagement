@@ -37,22 +37,31 @@ dependencies {
     //OpenAPI Generator
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.13")
 
-//Lombok
+    //Lombok
     compileOnly('org.projectlombok:lombok')
     annotationProcessor('org.projectlombok:lombok')
 
-//MyBatis
+    //MyBatis
     implementation 'org.mybatis.spring.boot:mybatis-spring-boot-starter:3.0.5'
 
-//MySQLドライバー
+    //MySQLドライバー
     runtimeOnly('com.mysql:mysql-connector-j')
 
     providedRuntime 'org.springframework.boot:spring-boot-starter-tomcat'
+
+    //SpringBoot Test
     testImplementation 'org.springframework.boot:spring-boot-starter-test'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
 
-//validation
+    //validation
     implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    //MyBatis Test
+    testImplementation("org.mybatis.spring.boot:mybatis-spring-boot-starter-test:3.0.5")
+
+    //H2(InMemoryDB)
+    testImplementation("com.h2database:h2:2.2.224")
+
 }
 
 tasks.named('test') {
