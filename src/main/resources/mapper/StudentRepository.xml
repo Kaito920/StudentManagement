@@ -72,7 +72,7 @@
 
   <!-- 受講生情報更新（メールアドレス） -->
   <update id="updateStudentMailAddress">
-    UPDATE students SET mailAddress = #{value} WHERE student_id = #{studentId}
+    UPDATE students SET mail_Address = #{value} WHERE student_id = #{studentId}
   </update>
 
   <!-- 受講生情報更新（住所） -->
